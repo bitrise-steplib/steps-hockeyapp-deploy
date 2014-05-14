@@ -10,15 +10,15 @@ Description of HockeyApp specific variables available at: http://support.hockeya
 # Input Environment Variables 
 - CONCRETE_IPA_PATH			(passed automatically)
 - CONCRETE_DSYM_PATH		(passed automatically)
--.
--HOCKEYAPP_TOKEN
--HOCKEYAPP_APP_ID
--HOCKEYAPP_NOTES			(optional, default = "Automatic build with Concrete.")
--HOCKEYAPP_NOTES_TYPE		(optional, default = 0 - Textile)
--HOCKEYAPP_NOTIFY			(optional, default = 2 - Notify all testers)
--HOCKEYAPP_STATUS			(optional, default = 2 - Available for download or installation)
--HOCKEYAPP_MANDATORY		(optional, default = 0 - not mandatory)
--HOCKEYAPP_TAGS				(optional)
--HOCKEYAPP_COMMIT_SHA		(optional)
--HOCKEYAPP_BUILD_SERVER_URL	(optional)
--HOCKEYAPP_REPOSITORY_URL	(optional)
+- .
+- HOCKEYAPP_TOKEN
+- HOCKEYAPP_APP_ID
+- HOCKEYAPP_NOTES			(optional, default = "Automatic build with Concrete.")
+- HOCKEYAPP_NOTES_TYPE		(optional, default = 0 - Textile)
+- HOCKEYAPP_NOTIFY			(optional, default = 2 - Notify all testers)
+- HOCKEYAPP_STATUS			(optional, default = 2 - Available for download or installation)
+- HOCKEYAPP_MANDATORY		(optional, default = 0 - not mandatory)
+- HOCKEYAPP_TAGS			(optional)
+- HOCKEYAPP_COMMIT_SHA		(optional)
+- HOCKEYAPP_BUILD_SERVER_URL(optional)
+- HOCKEYAPP_REPOSITORY_URL	(optional)
