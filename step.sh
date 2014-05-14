@@ -2,7 +2,7 @@
 # @Author: Tamas Szucs
 # @Date:   2014-05-14 15:16:02
 # @Last Modified by:   Tamas Szucs
-# @Last Modified time: 2014-05-14 16:22:53
+# @Last Modified time: 2014-05-14 16:38:04
 
 #default values
 
@@ -50,7 +50,7 @@ echo "HOCKEYAPP_COMMIT_SHA: $HOCKEYAPP_COMMIT_SHA"
 echo "HOCKEYAPP_BUILD_SERVER_URL: $HOCKEYAPP_BUILD_SERVER_URL"
 echo "HOCKEYAPP_REPOSITORY_URL: $HOCKEYAPP_REPOSITORY_URL"
 
-res=$(curl -is -X POST  \
+res=$(curl \
   -F "ipa=$CONCRETE_IPA_PATH" \
   -F "dsym=$CONCRETE_DSYM_PATH" \
   -F "notes=$notes" \
