@@ -2,7 +2,7 @@
 # @Author: Tamas Szucs
 # @Date:   2014-05-14 15:16:02
 # @Last Modified by:   Tamas Szucs
-# @Last Modified time: 2014-05-14 16:38:04
+# @Last Modified time: 2014-05-14 16:48:31
 
 #default values
 
@@ -51,8 +51,8 @@ echo "HOCKEYAPP_BUILD_SERVER_URL: $HOCKEYAPP_BUILD_SERVER_URL"
 echo "HOCKEYAPP_REPOSITORY_URL: $HOCKEYAPP_REPOSITORY_URL"
 
 res=$(curl \
-  -F "ipa=$CONCRETE_IPA_PATH" \
-  -F "dsym=$CONCRETE_DSYM_PATH" \
+  -F "ipa=@$CONCRETE_IPA_PATH" \
+  -F "dsym=@$CONCRETE_DSYM_PATH" \
   -F "notes=$notes" \
   -F "notes_type=$notes_type" \
   -F "notify=$notify" \
@@ -69,11 +69,6 @@ echo " --- Result ---"
 echo "$res"
 echo " --------------"
 
-http_code=$(echo "$res" | grep HTTP/ | awk {'print $2'} | tail -1)
-echo " [i] http_code: $http_code"
+$(echo "$res" | grep HTTP/ | awk {'print $2'} | tail -1)
 
-if [ "$http_code" == "201" ]; then
-  exit 0
-else
-  exit 1
-fi
+exit 0
