@@ -1,7 +1,7 @@
 step-hockeyapp-deploy
 =====================
 
-Concrete step to deploy an iOS application to HockeyApp.You need to register on HockeyApp's website http://hockeyapp.net/features/ and create an app to utilize this step. You also need to create a HockeyApp Token for your app. It will be used to authenticate you.
+Concrete step to deploy an iOS application to HockeyApp. You need to register on HockeyApp's website http://hockeyapp.net/features/ and create an app to utilize this step. You also need to create a HockeyApp Token for your app. It will be used to authenticate you.
 
 This step depends on the Archive Step.
 

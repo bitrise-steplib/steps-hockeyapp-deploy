@@ -2,7 +2,9 @@
 # @Author: Tamas Szucs
 # @Date:   2014-05-14 15:16:02
 # @Last Modified by:   Tamas Szucs
-# @Last Modified time: 2014-05-14 16:51:11
+# @Last Modified time: 2014-05-16 14:39:36
+
+source ./util-jsonval/step.sh
 
 #default values
 
@@ -50,7 +52,41 @@ echo "HOCKEYAPP_COMMIT_SHA: $HOCKEYAPP_COMMIT_SHA"
 echo "HOCKEYAPP_BUILD_SERVER_URL: $HOCKEYAPP_BUILD_SERVER_URL"
 echo "HOCKEYAPP_REPOSITORY_URL: $HOCKEYAPP_REPOSITORY_URL"
 
-res=$(curl \
+# IPA
+if [[ ! -f "$CONCRETE_IPA_PATH" ]]; then
+    echo "No IPA found to deploy"
+    echo "export CONCRETE_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+    echo "export TESTFLIGHT_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+    exit 1
+fi
+
+# dSYM if provided
+if [ ${CONCRETE_DSYM_PATH+x} ]; then
+  if [[ ! -f "$CONCRETE_DSYM_PATH" ]]; then
+    echo "No DSYM found to deploy"
+    echo "export CONCRETE_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+    echo "export TESTFLIGHT_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+    exit 1
+  fi
+fi
+
+# App token
+if [ ! ${HOCKEYAPP_TOKEN+x} ]; then
+    echo "No App token found"
+    echo "export CONCRETE_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+    echo "export TESTFLIGHT_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+    exit 1
+fi
+
+# App Id
+if [ ! ${HOCKEYAPP_APP_ID+x} ]; then
+    echo "No App Id found"
+    echo "export CONCRETE_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+    echo "export TESTFLIGHT_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+    exit 1
+fi
+
+json=$(curl \
   -F "ipa=@$CONCRETE_IPA_PATH" \
   -F "dsym=@$CONCRETE_DSYM_PATH" \
   -F "notes=$notes" \
@@ -62,13 +98,34 @@ res=$(curl \
   -F "commit_sha=$HOCKEYAPP_COMMIT_SHA" \
   -F "build_server_url=$HOCKEYAPP_BUILD_SERVER_URL" \
   -F "repository_url=$HOCKEYAPP_REPOSITORY_URL" \
-  -H "X-HockeyAppToken: $HOCKEYAPP_TOKEN" \
+  -H "X-HockeyAppToken: $HOCKEYAPP_OKEN" \
   https://rink.hockeyapp.net/api/2/apps/$HOCKEYAPP_APP_ID/app_versions/upload)
 
 echo " --- Result ---"
-echo "$res"
+echo "$json"
 echo " --------------"
 
-$(echo "$res" | grep HTTP/ | awk {'print $2'} | tail -1)
+# error checking
+
+prop='errors'
+errors=`jsonval`
+
+if [ ! ${errors+x} ]; then
+  echo "export CONCRETE_DEPLOY_STATUS=\"success\"" >> ~/.bash_profile
+  echo "export TESTFLIGHT_DEPLOY_STATUS=\"success\"" >> ~/.bash_profile
+
+  prop='public_url'
+  public_url=`jsonval`
+
+  echo "export CONCRETE_DEPLOY_URL=\"$install_url\"" >> ~/.bash_profile
+  echo "export TESTFLIGHT_DEPLOY_URL=\"$install_url\"" >> ~/.bash_profile
+
+  echo "CONCRETE_DEPLOY_URL: \"$install_url\""
+  echo "TESTFLIGHT_DEPLOY_URL: \"$install_url\""
+else
+  echo "export CONCRETE_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+  echo "export TESTFLIGHT_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+  exit 1
+fi
 
 exit 0
