@@ -1,0 +1,62 @@
+name: HockeyApp Deploy
+description: |
+  Concrete step to deploy an iOS application to HockeyApp. You need to register on HockeyApp's website http://hockeyapp.net/features/ and create an app to utilize this step. You also need to create a HockeyApp Token for your app. It will be used to authenticate you.
+
+inputs:
+  - title: |
+      IPA file path, generated in Xcode Build Archive step.
+    mapped_to: CONCRETE_IPA_PATH
+  - title: |
+      (optional) DSYM file path, generated in Xcode Build Archive step.
+    mapped_to: CONCRETE_DSYM_PATH
+  - title: |
+      Token to access the HockeyApp application (note that different access types exist when obtaining a token).
+    mapped_to: HOCKEYAPP_TOKEN
+  - title: |
+      Token to identify the HockeyApp application.
+    mapped_to: HOCKEYAPP_APP_ID
+  - title: |
+      (optional) Additional notes to the deploy. default = "Automatic build with Concrete.".
+    mapped_to: HOCKEYAPP_NOTES
+  - title: |
+      (optional) Notes type. Possible values: 0 - Textile (default), 1 - Markdown
+    mapped_to: HOCKEYAPP_NOTES_TYPE
+  - title: |
+      (optional) Sets who should be notified on deployment. Requires full-access tokens. Possible values: 0 - no testers, 1 - all testers that can install this app, 2 - all testers (default)
+    mapped_to: HOCKEYAPP_NOTIFY
+  - title: |
+      (optional) Download status. Requires full-access tokens. Possible values: 1 - not allow users to download the version, 2 - make the version available for download. (default)
+    mapped_to: HOCKEYAPP_STATUS
+  - title: |
+      (optional) Set if version is mandatory to install. 0 - not mandatory (default), 1 - mandatory
+    mapped_to: HOCKEYAPP_MANDATORY
+  - title: |
+      (optional) Restrict download to comma-separated list of tags.
+    mapped_to: HOCKEYAPP_TAGS
+  - title: |
+      (optional) Git commit sha for this build.
+    mapped_to: HOCKEYAPP_COMMIT_SHA
+  - title: |
+      (optional) Set to the URL of the build job on your build server.
+    mapped_to: HOCKEYAPP_BUILD_SERVER_URL
+  - title: |
+      (optional) Set to your source repository.
+    mapped_to: HOCKEYAPP_REPOSITORY_URL
+  
+
+
+
+
+outputs:
+  - title: |
+      Deployment result: 'success' or 'failed'.
+    mapped_to: HOCKEYAPP_DEPLOY_STATUS
+  - title: |
+      Public URL of the newly deployed version.
+    mapped_to: HOCKEYAPP_DEPLOY_PUBLIC_URL
+  - title: |
+      URL of the HockeyApp build.
+    mapped_to: HOCKEYAPP_DEPLOY_BUILD_URL
+  - title: |
+      URL of the HockeyApp config view.
+    mapped_to: HOCKEYAPP_DEPLOY_CONFIG_URL

@@ -24,9 +24,6 @@ Description of HockeyApp specific variables available at: http://support.hockeya
 - HOCKEYAPP_REPOSITORY_URL	(optional)
 
 # Output Environment Variables
-- CONCRETE_DEPLOY_STATUS	[success/failed]
-- CONCRETE_DEPLOY_URL 		(=public_url)
-- .
 - HOCKEYAPP_DEPLOY_STATUS	[success/failed]
 - HOCKEYAPP_DEPLOY_PUBLIC_URL
 - HOCKEYAPP_DEPLOY_BUILD_URL
