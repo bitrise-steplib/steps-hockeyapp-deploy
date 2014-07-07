@@ -2,12 +2,10 @@
 # @Author: Tamas Szucs
 # @Date:   2014-05-14 15:16:02
 # @Last Modified by:   Tamas Szucs
-# @Last Modified time: 2014-05-18 11:59:10
+# @Last Modified time: 2014-07-07 17:52:17
 
 function echoStatusFailed {
-  echo "export CONCRETE_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
   echo "export HOCKEYAPP_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
-  echo "\nCONCRETE_DEPLOY_STATUS: \"failed\""
   echo "HOCKEYAPP_DEPLOY_STATUS: \"failed\""
   echo " --------------"
 }
@@ -61,7 +59,6 @@ echo "HOCKEYAPP_REPOSITORY_URL: $HOCKEYAPP_REPOSITORY_URL"
 # IPA
 if [[ ! -f "$CONCRETE_IPA_PATH" ]]; then
     echo "No IPA found to deploy"
-    echo "export CONCRETE_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
     echo "export HOCKEYAPP_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
     echoStatusFailed
     exit 1
@@ -124,7 +121,6 @@ fi
 
 # everything is OK
 
-echo "export CONCRETE_DEPLOY_STATUS=\"success\"" >> ~/.bash_profile
 echo "export HOCKEYAPP_DEPLOY_STATUS=\"success\"" >> ~/.bash_profile
 
 # public url
@@ -132,7 +128,6 @@ public_url=`ruby ./util-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=public_url`
 
-echo "export CONCRETE_DEPLOY_URL=\"$public_url\"" >> ~/.bash_profile
 echo "export HOCKEYAPP_DEPLOY_PUBLIC_URL=\"$public_url\"" >> ~/.bash_profile
 
 # build url
@@ -151,9 +146,7 @@ echo "export HOCKEYAPP_DEPLOY_BUILD_URL=\"$config_url\"" >> ~/.bash_profile
 
 # final results
 echo " --SUCCESS--\n output env vars="
-echo "CONCRETE_DEPLOY_STATUS: \"success\""
 echo "HOCKEYAPP_DEPLOY_STATUS: \"success\""
-echo "CONCRETE_DEPLOY_URL: \"$public_url\""
 echo "HOCKEYAPP_DEPLOY_PUBLIC_URL: \"$public_url\""
 echo "HOCKEYAPP_DEPLOY_BUILD_URL: \"$build_url\""
 echo "HOCKEYAPP_DEPLOY_CONFIG_URL: \"$config_url\""
