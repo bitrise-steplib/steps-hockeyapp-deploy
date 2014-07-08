@@ -2,7 +2,7 @@
 # @Author: Tamas Szucs
 # @Date:   2014-05-14 15:16:02
 # @Last Modified by:   Tamas Szucs
-# @Last Modified time: 2014-07-07 17:52:17
+# @Last Modified time: 2014-07-08 15:54:39
 
 function echoStatusFailed {
   echo "export HOCKEYAPP_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
@@ -107,10 +107,13 @@ echo "$json"
 echo " --------------\n"
 
 # error handling
-
-errors=`ruby ./util-jsonval/parse_json.rb \
-  --json-string="$json" \
-  --prop=errors`
+if [[ $json ]]; then
+  errors=`ruby ./util-jsonval/parse_json.rb \
+    --json-string="$json" \
+    --prop=errors`
+else
+  errors="No valid JSON result from request."
+fi
 
 if [[ $errors ]]; then
   echo " --FAILED--"

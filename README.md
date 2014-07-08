@@ -7,6 +7,8 @@ This step depends on the Archive Step.
 
 Description of HockeyApp specific variables available at: http://support.hockeyapp.net/kb/api/api-versions#-u-post-api-2-apps-app_id-app_versions-upload-u-
 
+To run the tests for this step it is important to execute them from the root directory of the step (example usage: ./tests/step_test.sh)
+
 # Input Environment Variables 
 - CONCRETE_IPA_PATH			(passed automatically)
 - CONCRETE_DSYM_PATH		(passed automatically)
