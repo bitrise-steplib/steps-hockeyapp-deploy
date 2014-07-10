@@ -169,7 +169,7 @@ test_result=$?
 inspect_test_result $test_result
 
 
-# [TEST] Call the command with HOCKEYAPP_APP_ID and HOCKEYAPP_TOKEN NOT set, 
+# [TEST] Call the command with CONCRETE_IPA_PATH NOT set, 
 # it should raise an error message and exit
 # 
 (
