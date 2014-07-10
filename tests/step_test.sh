@@ -83,10 +83,13 @@ function is_not_empty {
   fi
 }
 
-function test_cleanup {
+function test_env_cleanup {
   unset HOCKEYAPP_APP_ID
   unset HOCKEYAPP_TOKEN
   unset CONCRETE_IPA_PATH
+  if [[ -f "$test_ipa_path" ]]; then
+    rm $test_ipa_path
+  fi
 }
 
 function print_new_test {
@@ -98,7 +101,7 @@ function print_new_test {
 # --- Run tests ---
 
 function run_target_command { 
-  print_and_do_command eval "CONCRETE_IPA_PATH=$test_ipa_path ./step.sh"
+  print_and_do_command eval "./step.sh"
 }
 
 echo "Starting tests..."
@@ -112,10 +115,12 @@ test_results_error_count=0
 # 
 (
   print_new_test
+  test_env_cleanup
 
   # Set env vars
   HOCKEYAPP_TOKEN="asd1234"
   HOCKEYAPP_APP_ID="dsa4321"
+  CONCRETE_IPA_PATH=$test_ipa_path
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -123,14 +128,13 @@ test_results_error_count=0
   # The file should exist
   expect_success "File $test_ipa_path should exist" is_file_exist "$test_ipa_path"
 
-  # Both HOCKEYAPP_TOKEN and HOCKEYAPP_APP_ID should exist
+  # HOCKEYAPP_TOKEN, HOCKEYAPP_APP_ID and CONCRETE_IPA_PATH should exist
   expect_success "HOCKEYAPP_TOKEN environment variable should be set" is_not_empty "$HOCKEYAPP_TOKEN"
   expect_success "HOCKEYAPP_APP_ID environment variable should be set" is_not_empty "$HOCKEYAPP_APP_ID"
+  expect_success "CONCRETE_IPA_PATH environment variable should be set" is_not_empty "$CONCRETE_IPA_PATH"
 
   # Deploy the file
   expect_error "The command should be called, but should not complete sucessfully" run_target_command
-
-  test_cleanup
 )
 test_result=$?
 inspect_test_result $test_result
@@ -141,9 +145,11 @@ inspect_test_result $test_result
 # 
 (
   print_new_test
+  test_env_cleanup
 
-  # Set env var
+  # Set env vars
   HOCKEYAPP_APP_ID="dsa4321"
+  CONCRETE_IPA_PATH=$test_ipa_path
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -154,23 +160,25 @@ inspect_test_result $test_result
   # HOCKEYAPP_TOKEN should NOT exist
   expect_error "HOCKEYAPP_TOKEN environment variable should NOT be set" is_not_empty "$HOCKEYAPP_TOKEN"
   expect_success "HOCKEYAPP_APP_ID environment variable should be set" is_not_empty "$HOCKEYAPP_APP_ID"
+  expect_success "CONCRETE_IPA_PATH environment variable should be set" is_not_empty "$CONCRETE_IPA_PATH"
 
   # Deploy the file
-  expect_error "The command should be called, but should not complete sucessfully" run_target_command
-
-  test_cleanup
+  expect_error "The command should be called, but should not complete sucessfully" run_target_command  
 )
 test_result=$?
 inspect_test_result $test_result
+
 
 # [TEST] Call the command with HOCKEYAPP_APP_ID not set, 
 # it should raise an error message and exit
 # 
 (
   print_new_test
+  test_env_cleanup
 
   # Set env vars
   HOCKEYAPP_TOKEN="asd1234"
+  CONCRETE_IPA_PATH=$test_ipa_path
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -181,20 +189,25 @@ inspect_test_result $test_result
   # HOCKEYAPP_APP_ID should NOT exist
   expect_error "HOCKEYAPP_APP_ID environment variable should NOT be set" is_not_empty "$HOCKEYAPP_APP_ID"
   expect_success "HOCKEYAPP_TOKEN environment variable should be set" is_not_empty "$HOCKEYAPP_TOKEN"
+  expect_success "CONCRETE_IPA_PATH environment variable should be set" is_not_empty "$CONCRETE_IPA_PATH"
 
   # Deploy the file
-  expect_error "The command should be called, but should not complete sucessfully" run_target_command
-
-  test_cleanup
+  expect_error "The command should be called, but should not complete sucessfully" run_target_command 
 )
 test_result=$?
 inspect_test_result $test_result
+
 
 # [TEST] Call the command with HOCKEYAPP_APP_ID and HOCKEYAPP_TOKEN NOT set, 
 # it should raise an error message and exit
 # 
 (
   print_new_test
+  test_env_cleanup
+
+  # Set env vars
+  HOCKEYAPP_TOKEN="asd1234"
+  HOCKEYAPP_APP_ID="asd1234"
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -202,17 +215,52 @@ inspect_test_result $test_result
   # The file should exist
   expect_success "File $test_ipa_path should exist" is_file_exist "$test_ipa_path"
 
-  # HOCKEYAPP_APP_ID and HOCKEYAPP_TOKEN should NOT exist
-  expect_error "HOCKEYAPP_APP_ID environment variable should NOT be set" is_not_empty "$HOCKEYAPP_APP_ID"
-  expect_error "HOCKEYAPP_TOKEN environment variable should NOT be set" is_not_empty "$HOCKEYAPP_TOKEN"
+  # CONCRETE_IPA_PATH should NOT exist
+  expect_success "HOCKEYAPP_APP_ID environment variable should be set" is_not_empty "$HOCKEYAPP_APP_ID"
+  expect_success "HOCKEYAPP_TOKEN environment variable should be set" is_not_empty "$HOCKEYAPP_TOKEN"
+  expect_error "CONCRETE_IPA_PATH environment variable should NOT be set" is_not_empty "$CONCRETE_IPA_PATH"
 
   # Deploy the file
   expect_error "The command should be called, but should not complete sucessfully" run_target_command
-
-  test_cleanup
 )
 test_result=$?
 inspect_test_result $test_result
+
+
+# [TEST] Call the command with everything set, but no ipa file exists at the given path, 
+# it should raise an error message and exit
+# 
+(
+  print_new_test
+  test_env_cleanup
+
+  # Set env vars
+  HOCKEYAPP_TOKEN="asd1234"
+  HOCKEYAPP_APP_ID="asd1234"
+  CONCRETE_IPA_PATH=$test_ipa_path
+
+  # remove test file if exists
+  if [[ -f "$CONCRETE_IPA_PATH" ]]; then
+    rm $CONCRETE_IPA_PATH
+  fi
+
+  # The file should NOT exist
+  expect_error "File $CONCRETE_IPA_PATH should NOT exist" is_file_exist "$CONCRETE_IPA_PATH"
+
+  # CONCRETE_IPA_PATH should NOT exist
+  expect_success "HOCKEYAPP_APP_ID environment variable should be set" is_not_empty "$HOCKEYAPP_APP_ID"
+  expect_success "HOCKEYAPP_TOKEN environment variable should be set" is_not_empty "$HOCKEYAPP_TOKEN"
+  expect_success "CONCRETE_IPA_PATH environment variable should be set" is_not_empty "$CONCRETE_IPA_PATH"
+
+  # Deploy the file
+  expect_error "The command should be called, but should not complete sucessfully" run_target_command
+)
+test_result=$?
+inspect_test_result $test_result
+
+
+#final cleanup
+test_env_cleanup
 
 # --------------------
 # --- Test Results ---
