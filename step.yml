@@ -3,18 +3,12 @@ description: |
   Concrete step to deploy an iOS application to HockeyApp. You need to register on HockeyApp's website http://hockeyapp.net/features/ and create an app to utilize this step. You also need to create a HockeyApp Token for your app. It will be used to authenticate you.
 
 inputs:
-#- title: |
-  #   IPA file path, generated in Xcode Build Archive step.
-  # mapped_to: CONCRETE_IPA_PATH
   - title: |
       Token to access the HockeyApp application (note that different access types exist when obtaining a token on your account page).
     mapped_to: HOCKEYAPP_TOKEN
   - title: |
       Identifier of the HockeyApp application.
     mapped_to: HOCKEYAPP_APP_ID
-# - title: |
-  #    (optional) DSYM file path, generated in Xcode Build Archive step.
-  #  mapped_to: CONCRETE_DSYM_PATH
   - title: |
       (optional) Additional notes to the deploy. default = "Automatic build with Concrete.".
     mapped_to: HOCKEYAPP_NOTES
