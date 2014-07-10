@@ -97,47 +97,18 @@ function print_new_test {
   echo "[TEST]"
 }
 
+function run_target_command {
+  print_and_do_command ./step.sh
+}
+
 # -----------------
 # --- Run tests ---
-
-function run_target_command { 
-  print_and_do_command eval "./step.sh"
-}
 
 echo "Starting tests..."
 
 test_ipa_path="tests/testfile.ipa"
 test_results_success_count=0
 test_results_error_count=0
-
-# [TEST] Call the command with the minimum required parameters given, 
-# it should execute, but curl should return with authentication error
-# 
-(
-  print_new_test
-  test_env_cleanup
-
-  # Set env vars
-  HOCKEYAPP_TOKEN="asd1234"
-  HOCKEYAPP_APP_ID="dsa4321"
-  CONCRETE_IPA_PATH=$test_ipa_path
-
-  # Create test file
-  print_and_do_command echo 'test file content' > "$test_ipa_path"
-
-  # The file should exist
-  expect_success "File $test_ipa_path should exist" is_file_exist "$test_ipa_path"
-
-  # HOCKEYAPP_TOKEN, HOCKEYAPP_APP_ID and CONCRETE_IPA_PATH should exist
-  expect_success "HOCKEYAPP_TOKEN environment variable should be set" is_not_empty "$HOCKEYAPP_TOKEN"
-  expect_success "HOCKEYAPP_APP_ID environment variable should be set" is_not_empty "$HOCKEYAPP_APP_ID"
-  expect_success "CONCRETE_IPA_PATH environment variable should be set" is_not_empty "$CONCRETE_IPA_PATH"
-
-  # Deploy the file
-  expect_error "The command should be called, but should not complete sucessfully" run_target_command
-)
-test_result=$?
-inspect_test_result $test_result
 
 
 # [TEST] Call the command with HOCKEYAPP_TOKEN not set, 
@@ -148,8 +119,8 @@ inspect_test_result $test_result
   test_env_cleanup
 
   # Set env vars
-  HOCKEYAPP_APP_ID="dsa4321"
-  CONCRETE_IPA_PATH=$test_ipa_path
+  export HOCKEYAPP_APP_ID="dsa4321"
+  export CONCRETE_IPA_PATH=$test_ipa_path
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -177,8 +148,8 @@ inspect_test_result $test_result
   test_env_cleanup
 
   # Set env vars
-  HOCKEYAPP_TOKEN="asd1234"
-  CONCRETE_IPA_PATH=$test_ipa_path
+  export HOCKEYAPP_TOKEN="asd1234"
+  export CONCRETE_IPA_PATH=$test_ipa_path
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -206,8 +177,8 @@ inspect_test_result $test_result
   test_env_cleanup
 
   # Set env vars
-  HOCKEYAPP_TOKEN="asd1234"
-  HOCKEYAPP_APP_ID="asd1234"
+  export HOCKEYAPP_TOKEN="asd1234"
+  export HOCKEYAPP_APP_ID="asd1234"
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -235,9 +206,9 @@ inspect_test_result $test_result
   test_env_cleanup
 
   # Set env vars
-  HOCKEYAPP_TOKEN="asd1234"
-  HOCKEYAPP_APP_ID="asd1234"
-  CONCRETE_IPA_PATH=$test_ipa_path
+  export HOCKEYAPP_TOKEN="asd1234"
+  export HOCKEYAPP_APP_ID="asd1234"
+  export CONCRETE_IPA_PATH=$test_ipa_path
 
   # remove test file if exists
   if [[ -f "$CONCRETE_IPA_PATH" ]]; then

@@ -2,7 +2,7 @@
 # @Author: Tamas Szucs
 # @Date:   2014-05-14 15:16:02
 # @Last Modified by:   Tamas Szucs
-# @Last Modified time: 2014-07-08 15:54:39
+# @Last Modified time: 2014-07-10 15:31:00
 
 function echoStatusFailed {
   echo "export HOCKEYAPP_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
@@ -42,6 +42,7 @@ else
 	mandatory=0
 fi
 
+echo
 echo "CONCRETE_IPA_PATH: $CONCRETE_IPA_PATH"
 echo "CONCRETE_DSYM_PATH: $CONCRETE_DSYM_PATH"
 echo "HOCKEYAPP_TOKEN: $HOCKEYAPP_TOKEN"
@@ -81,11 +82,13 @@ if [[ ! $HOCKEYAPP_TOKEN ]]; then
 fi
 
 # App Id
-if [[ ! HOCKEYAPP_APP_ID ]]; then
+if [[ ! $HOCKEYAPP_APP_ID ]]; then
     echo "No App Id provided as environment variable"
     echoStatusFailed
     exit 1
 fi
+
+###########################
 
 json=$(curl \
   -F "ipa=@$CONCRETE_IPA_PATH" \
@@ -148,6 +151,7 @@ config_url=`ruby ./util-jsonval/parse_json.rb \
 echo "export HOCKEYAPP_DEPLOY_BUILD_URL=\"$config_url\"" >> ~/.bash_profile
 
 # final results
+echo
 echo " --SUCCESS--\n output env vars="
 echo "HOCKEYAPP_DEPLOY_STATUS: \"success\""
 echo "HOCKEYAPP_DEPLOY_PUBLIC_URL: \"$public_url\""
