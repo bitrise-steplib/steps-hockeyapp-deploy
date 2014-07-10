@@ -120,7 +120,7 @@ test_results_error_count=0
 
   # Set env vars
   export HOCKEYAPP_APP_ID="dsa4321"
-  export CONCRETE_IPA_PATH=$test_ipa_path
+  export CONCRETE_IPA_PATH="$test_ipa_path"
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -149,7 +149,7 @@ inspect_test_result $test_result
 
   # Set env vars
   export HOCKEYAPP_TOKEN="asd1234"
-  export CONCRETE_IPA_PATH=$test_ipa_path
+  export CONCRETE_IPA_PATH="$test_ipa_path"
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -208,7 +208,7 @@ inspect_test_result $test_result
   # Set env vars
   export HOCKEYAPP_TOKEN="asd1234"
   export HOCKEYAPP_APP_ID="asd1234"
-  export CONCRETE_IPA_PATH=$test_ipa_path
+  export CONCRETE_IPA_PATH="$test_ipa_path"
 
   # remove test file if exists
   if [[ -f "$CONCRETE_IPA_PATH" ]]; then
