@@ -10,8 +10,8 @@ Description of HockeyApp specific variables available at: http://support.hockeya
 To run the tests for this step it is important to execute them from the root directory of the step (example usage: ./tests/step_test.sh)
 
 # Input Environment Variables 
-- CONCRETE_IPA_PATH			(passed automatically)
-- CONCRETE_DSYM_PATH		(passed automatically)
+- BITRISE_IPA_PATH			(passed automatically)
+- BITRISE_DSYM_PATH			(passed automatically)
 - .
 - HOCKEYAPP_TOKEN
 - HOCKEYAPP_APP_ID
