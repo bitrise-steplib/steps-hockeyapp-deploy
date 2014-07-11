@@ -2,7 +2,7 @@
 # @Author: Tamas Szucs
 # @Date:   2014-05-14 15:16:02
 # @Last Modified by:   Tamas Szucs
-# @Last Modified time: 2014-07-10 18:14:54
+# @Last Modified time: 2014-07-11 13:34:08
 
 function echoStatusFailed {
   echo "export HOCKEYAPP_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
@@ -16,7 +16,7 @@ function echoStatusFailed {
 if [[ $HOCKEYAPP_NOTES ]]; then
 	notes=$HOCKEYAPP_NOTES
 else
-	notes="Automatic build with Concrete."
+	notes="Automatic build with Bitrise."
 fi
 
 if [[ $HOCKEYAPP_NOTES_TYPE ]]; then
@@ -44,8 +44,8 @@ else
 fi
 
 echo
-echo "CONCRETE_IPA_PATH: $CONCRETE_IPA_PATH"
-echo "CONCRETE_DSYM_PATH: $CONCRETE_DSYM_PATH"
+echo "BITRISE_IPA_PATH: $BITRISE_IPA_PATH"
+echo "BITRISE_DSYM_PATH: $BITRISE_DSYM_PATH"
 echo "HOCKEYAPP_TOKEN: $HOCKEYAPP_TOKEN"
 echo "HOCKEYAPP_APP_ID: $HOCKEYAPP_APP_ID"
 echo "HOCKEYAPP_NOTES: $notes"
@@ -59,7 +59,7 @@ echo "HOCKEYAPP_BUILD_SERVER_URL: $HOCKEYAPP_BUILD_SERVER_URL"
 echo "HOCKEYAPP_REPOSITORY_URL: $HOCKEYAPP_REPOSITORY_URL"
 
 # IPA
-if [[ ! -f "$CONCRETE_IPA_PATH" ]]; then
+if [[ ! -f "$BITRISE_IPA_PATH" ]]; then
     echo
     echo "No IPA found to deploy. Terminating..."
     echo
@@ -68,8 +68,8 @@ if [[ ! -f "$CONCRETE_IPA_PATH" ]]; then
 fi
 
 # dSYM if provided
-if [[ $CONCRETE_DSYM_PATH ]]; then
-  if [[ ! -f "$CONCRETE_DSYM_PATH" ]]; then
+if [[ $BITRISE_DSYM_PATH ]]; then
+  if [[ ! -f "$BITRISE_DSYM_PATH" ]]; then
     echo
     echo "No DSYM found to deploy, though path has been set. Terminating..."
     echo
@@ -99,8 +99,8 @@ fi
 ###########################
 
 json=$(curl \
-  -F "ipa=@$CONCRETE_IPA_PATH" \
-  -F "dsym=@$CONCRETE_DSYM_PATH" \
+  -F "ipa=@$BITRISE_IPA_PATH" \
+  -F "dsym=@$BITRISE_DSYM_PATH" \
   -F "notes=$notes" \
   -F "notes_type=$notes_type" \
   -F "notify=$notify" \
