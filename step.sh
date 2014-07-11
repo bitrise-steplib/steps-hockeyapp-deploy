@@ -2,12 +2,11 @@
 # @Author: Tamas Szucs
 # @Date:   2014-05-14 15:16:02
 # @Last Modified by:   Tamas Szucs
-# @Last Modified time: 2014-05-18 11:59:10
+# @Last Modified time: 2014-07-10 18:14:54
 
 function echoStatusFailed {
-  echo "export CONCRETE_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
   echo "export HOCKEYAPP_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
-  echo "\nCONCRETE_DEPLOY_STATUS: \"failed\""
+  echo
   echo "HOCKEYAPP_DEPLOY_STATUS: \"failed\""
   echo " --------------"
 }
@@ -44,6 +43,7 @@ else
 	mandatory=0
 fi
 
+echo
 echo "CONCRETE_IPA_PATH: $CONCRETE_IPA_PATH"
 echo "CONCRETE_DSYM_PATH: $CONCRETE_DSYM_PATH"
 echo "HOCKEYAPP_TOKEN: $HOCKEYAPP_TOKEN"
@@ -60,9 +60,9 @@ echo "HOCKEYAPP_REPOSITORY_URL: $HOCKEYAPP_REPOSITORY_URL"
 
 # IPA
 if [[ ! -f "$CONCRETE_IPA_PATH" ]]; then
-    echo "No IPA found to deploy"
-    echo "export CONCRETE_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
-    echo "export HOCKEYAPP_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+    echo
+    echo "No IPA found to deploy. Terminating..."
+    echo
     echoStatusFailed
     exit 1
 fi
@@ -70,7 +70,9 @@ fi
 # dSYM if provided
 if [[ $CONCRETE_DSYM_PATH ]]; then
   if [[ ! -f "$CONCRETE_DSYM_PATH" ]]; then
-    echo "No DSYM found to deploy"
+    echo
+    echo "No DSYM found to deploy, though path has been set. Terminating..."
+    echo
     echoStatusFailed
     exit 1
   fi
@@ -78,17 +80,23 @@ fi
 
 # App token
 if [[ ! $HOCKEYAPP_TOKEN ]]; then
-    echo "No App token provided as environment variable"
+    echo
+    echo "No App token provided as environment variable. Terminating..."
+    echo
     echoStatusFailed
     exit 1
 fi
 
 # App Id
-if [[ ! HOCKEYAPP_APP_ID ]]; then
-    echo "No App Id provided as environment variable"
+if [[ ! $HOCKEYAPP_APP_ID ]]; then
+    echo
+    echo "No App Id provided as environment variable. Terminating..."
+    echo
     echoStatusFailed
     exit 1
 fi
+
+###########################
 
 json=$(curl \
   -F "ipa=@$CONCRETE_IPA_PATH" \
@@ -110,10 +118,13 @@ echo "$json"
 echo " --------------\n"
 
 # error handling
-
-errors=`ruby ./util-jsonval/parse_json.rb \
-  --json-string="$json" \
-  --prop=errors`
+if [[ $json ]]; then
+  errors=`ruby ./util-jsonval/parse_json.rb \
+    --json-string="$json" \
+    --prop=errors`
+else
+  errors="No valid JSON result from request."
+fi
 
 if [[ $errors ]]; then
   echo " --FAILED--"
@@ -124,7 +135,6 @@ fi
 
 # everything is OK
 
-echo "export CONCRETE_DEPLOY_STATUS=\"success\"" >> ~/.bash_profile
 echo "export HOCKEYAPP_DEPLOY_STATUS=\"success\"" >> ~/.bash_profile
 
 # public url
@@ -132,7 +142,6 @@ public_url=`ruby ./util-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=public_url`
 
-echo "export CONCRETE_DEPLOY_URL=\"$public_url\"" >> ~/.bash_profile
 echo "export HOCKEYAPP_DEPLOY_PUBLIC_URL=\"$public_url\"" >> ~/.bash_profile
 
 # build url
@@ -150,10 +159,9 @@ config_url=`ruby ./util-jsonval/parse_json.rb \
 echo "export HOCKEYAPP_DEPLOY_BUILD_URL=\"$config_url\"" >> ~/.bash_profile
 
 # final results
+echo
 echo " --SUCCESS--\n output env vars="
-echo "CONCRETE_DEPLOY_STATUS: \"success\""
 echo "HOCKEYAPP_DEPLOY_STATUS: \"success\""
-echo "CONCRETE_DEPLOY_URL: \"$public_url\""
 echo "HOCKEYAPP_DEPLOY_PUBLIC_URL: \"$public_url\""
 echo "HOCKEYAPP_DEPLOY_BUILD_URL: \"$build_url\""
 echo "HOCKEYAPP_DEPLOY_CONFIG_URL: \"$config_url\""
