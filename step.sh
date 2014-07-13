@@ -1,8 +1,4 @@
 #!/bin/bash
-# @Author: Tamas Szucs
-# @Date:   2014-05-14 15:16:02
-# @Last Modified by:   Tamas Szucs
-# @Last Modified time: 2014-07-13 22:52:34
 
 function echoStatusFailed {
   echo "export HOCKEYAPP_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
