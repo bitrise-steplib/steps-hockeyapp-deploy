@@ -2,7 +2,7 @@
 # @Author: Tamas Szucs
 # @Date:   2014-05-14 15:16:02
 # @Last Modified by:   Tamas Szucs
-# @Last Modified time: 2014-07-11 13:34:08
+# @Last Modified time: 2014-07-13 22:52:34
 
 function echoStatusFailed {
   echo "export HOCKEYAPP_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
@@ -119,7 +119,7 @@ echo " --------------\n"
 
 # error handling
 if [[ $json ]]; then
-  errors=`ruby ./util-jsonval/parse_json.rb \
+  errors=`ruby ./steps-utils-jsonval/parse_json.rb \
     --json-string="$json" \
     --prop=errors`
 else
@@ -138,21 +138,21 @@ fi
 echo "export HOCKEYAPP_DEPLOY_STATUS=\"success\"" >> ~/.bash_profile
 
 # public url
-public_url=`ruby ./util-jsonval/parse_json.rb \
+public_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=public_url`
 
 echo "export HOCKEYAPP_DEPLOY_PUBLIC_URL=\"$public_url\"" >> ~/.bash_profile
 
 # build url
-build_url=`ruby ./util-jsonval/parse_json.rb \
+build_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=build_url`
 
 echo "export HOCKEYAPP_DEPLOY_BUILD_URL=\"$build_url\"" >> ~/.bash_profile
 
 # config url
-config_url=`ruby ./util-jsonval/parse_json.rb \
+config_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=config_url`
 
