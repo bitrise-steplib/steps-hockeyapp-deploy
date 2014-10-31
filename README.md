@@ -9,6 +9,8 @@ Description of HockeyApp specific variables available at: http://support.hockeya
 
 To run the tests for this step it is important to execute them from the root directory of the step (example usage: ./tests/step_test.sh)
 
+This Step is part of the [Open StepLib](http://www.steplib.com/), you can find its StepLib page [here](http://www.steplib.com/step/hockeyapp-deploy)
+
 # Input Environment Variables 
 - BITRISE_IPA_PATH			(passed automatically)
 - BITRISE_DSYM_PATH			(passed automatically)
