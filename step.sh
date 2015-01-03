@@ -148,7 +148,7 @@ fi
 
 if [[ ${errors} ]]; then
   write_section_to_formatted_output "# Error"
-  write_section_start_to_formatted_output '* ${errors}'
+  write_section_start_to_formatted_output "* ${errors}"
   echoStatusFailed
   exit 1
 fi
