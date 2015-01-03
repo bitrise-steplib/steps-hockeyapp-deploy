@@ -15,6 +15,14 @@ type_tags:
 requires_admin_user: false
 inputs:
   - title: |
+      IPA file path
+    mapped_to: BITRISE_IPA_PATH
+    is_expand: true
+  - title: |
+      (optional) dSYM file path
+    mapped_to: BITRISE_DSYM_PATH
+    is_expand: true
+  - title: |
       Token to access the HockeyApp application (note that different access types exist when obtaining a token on your account page)
     mapped_to: HOCKEYAPP_TOKEN
     is_expand: false
