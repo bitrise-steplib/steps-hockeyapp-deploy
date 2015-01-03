@@ -25,7 +25,7 @@ echo "" > "${formatted_output_file_path}"
 if [ -z "${HOCKEYAPP_NOTES}" ] ; then
 	notes="${HOCKEYAPP_NOTES}"
 else
-	notes="Automatic build with Bitrise."
+	notes="Automatic build with Bitrise.io"
 fi
 
 if [ -z "${HOCKEYAPP_NOTES_TYPE}" ] ; then
@@ -126,55 +126,66 @@ echo " * response JSON: ${json}"
 echo " --------------"
 echo
 
+if [ ${curl_res} -ne 0 ] ; then
+  write_section_to_formatted_output "# Error"
+  write_section_start_to_formatted_output '* cURL command exit code not zero!'
+  echoStatusFailed
+  exit 1
+fi
+
 # error handling
-if [[ $json ]]; then
+if [[ ${json} ]]; then
   errors=`ruby ./steps-utils-jsonval/parse_json.rb \
-    --json-string="$json" \
+    --json-string="${json}" \
     --prop=errors`
   parse_res=$?
+  if [ ${parse_res} -ne 0 ] ; then
+    errors="Failed to parse the response JSON"
+  fi
 else
   errors="No valid JSON result from request."
 fi
 
-if [[ $errors ]]; then
-  echo " --FAILED--"
-  echo "$errors"
+if [[ ${errors} ]]; then
+  write_section_to_formatted_output "# Error"
+  write_section_start_to_formatted_output '* ${errors}'
   echoStatusFailed
   exit 1
 fi
 
 # everything is OK
 
-echo "export HOCKEYAPP_DEPLOY_STATUS=\"success\"" >> ~/.bash_profile
+export HOCKEYAPP_DEPLOY_STATUS="success"
+echo 'export HOCKEYAPP_DEPLOY_STATUS="success"' >> ~/.bash_profile
 
 # public url
 public_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=public_url`
 
-echo "export HOCKEYAPP_DEPLOY_PUBLIC_URL=\"$public_url\"" >> ~/.bash_profile
+echo "export HOCKEYAPP_DEPLOY_PUBLIC_URL=\"${public_url}\"" >> ~/.bash_profile
 
 # build url
 build_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=build_url`
 
-echo "export HOCKEYAPP_DEPLOY_BUILD_URL=\"$build_url\"" >> ~/.bash_profile
+echo "export HOCKEYAPP_DEPLOY_BUILD_URL=\"${build_url}\"" >> ~/.bash_profile
 
 # config url
 config_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=config_url`
 
-echo "export HOCKEYAPP_DEPLOY_BUILD_URL=\"$config_url\"" >> ~/.bash_profile
+echo "export HOCKEYAPP_DEPLOY_CONFIG_URL=\"${config_url}\"" >> ~/.bash_profile
+
 
 # final results
-echo
-echo " --SUCCESS--\n output env vars="
-echo "HOCKEYAPP_DEPLOY_STATUS: \"success\""
-echo "HOCKEYAPP_DEPLOY_PUBLIC_URL: \"$public_url\""
-echo "HOCKEYAPP_DEPLOY_BUILD_URL: \"$build_url\""
-echo "HOCKEYAPP_DEPLOY_CONFIG_URL: \"$config_url\""
-echo " --------------"
+write_section_to_formatted_output "# Success"
+write_section_to_formatted_output "## Generated Outputs"
+echo_string_to_formatted_output " * HOCKEYAPP_DEPLOY_STATUS: `${HOCKEYAPP_DEPLOY_STATUS}`"
+echo_string_to_formatted_output " * HOCKEYAPP_DEPLOY_PUBLIC_URL: `${public_url}`"
+echo_string_to_formatted_output " * HOCKEYAPP_DEPLOY_BUILD_URL: `${build_url}`"
+echo_string_to_formatted_output " * HOCKEYAPP_DEPLOY_CONFIG_URL: `${config_url}`"
 
 exit 0
