@@ -1,93 +1,102 @@
 #!/bin/bash
 
+THIS_SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${THIS_SCRIPTDIR}/_utils.sh"
+source "${THIS_SCRIPTDIR}/_formatted_output.sh"
+
 function echoStatusFailed {
-  echo "export HOCKEYAPP_DEPLOY_STATUS=\"failed\"" >> ~/.bash_profile
+  echo 'export HOCKEYAPP_DEPLOY_STATUS="failed"' >> ~/.bash_profile
   echo
-  echo "HOCKEYAPP_DEPLOY_STATUS: \"failed\""
+  echo 'HOCKEYAPP_DEPLOY_STATUS: "failed"'
   echo " --------------"
 }
 
-#default values
+function CLEANUP_ON_ERROR_FN {
+  write_section_to_formatted_output "# Error"
+  echo_string_to_formatted_output "See the logs for more details"
+}
 
-if [[ $HOCKEYAPP_NOTES ]]; then
-	notes=$HOCKEYAPP_NOTES
+# init / cleanup the formatted output
+echo "" > "${formatted_output_file_path}"
+
+
+# default values
+
+if [ -z "${HOCKEYAPP_NOTES}" ] ; then
+	notes="${HOCKEYAPP_NOTES}"
 else
 	notes="Automatic build with Bitrise."
 fi
 
-if [[ $HOCKEYAPP_NOTES_TYPE ]]; then
-	notes_type=$HOCKEYAPP_NOTES_TYPE
+if [ -z "${HOCKEYAPP_NOTES_TYPE}" ] ; then
+	notes_type="${HOCKEYAPP_NOTES_TYPE}"
 else
 	notes_type=0
 fi
 
-if [[ $HOCKEYAPP_NOTIFY ]]; then
-	notify=$HOCKEYAPP_NOTIFY
+if [ -z "${HOCKEYAPP_NOTIFY}" ] ; then
+	notify="${HOCKEYAPP_NOTIFY}"
 else
 	notify=2
 fi
 
-if [[ $HOCKEYAPP_STATUS ]]; then
-	status=$HOCKEYAPP_STATUS
+if [ -z "${HOCKEYAPP_STATUS}" ] ; then
+	status="${HOCKEYAPP_STATUS}"
 else
 	status=2
 fi
 
-if [[ $HOCKEYAPP_MANDATORY ]]; then
-	mandatory=$HOCKEYAPP_MANDATORY
+if [ -z "${HOCKEYAPP_MANDATORY}" ] ; then
+	mandatory="${HOCKEYAPP_MANDATORY}"
 else
 	mandatory=0
 fi
 
 echo
-echo "BITRISE_IPA_PATH: $BITRISE_IPA_PATH"
-echo "BITRISE_DSYM_PATH: $BITRISE_DSYM_PATH"
-echo "HOCKEYAPP_TOKEN: $HOCKEYAPP_TOKEN"
-echo "HOCKEYAPP_APP_ID: $HOCKEYAPP_APP_ID"
-echo "HOCKEYAPP_NOTES: $notes"
-echo "HOCKEYAPP_NOTES_TYPE: $notes_type"
-echo "HOCKEYAPP_NOTIFY: $notify"
-echo "HOCKEYAPP_STATUS: $status"
-echo "HOCKEYAPP_MANDATORY: $mandatory"
-echo "HOCKEYAPP_TAGS: $HOCKEYAPP_TAGS"
-echo "HOCKEYAPP_COMMIT_SHA: $HOCKEYAPP_COMMIT_SHA"
-echo "HOCKEYAPP_BUILD_SERVER_URL: $HOCKEYAPP_BUILD_SERVER_URL"
-echo "HOCKEYAPP_REPOSITORY_URL: $HOCKEYAPP_REPOSITORY_URL"
+echo "BITRISE_IPA_PATH: ${BITRISE_IPA_PATH}"
+echo "BITRISE_DSYM_PATH: ${BITRISE_DSYM_PATH}"
+echo "HOCKEYAPP_TOKEN: ${HOCKEYAPP_TOKEN}"
+echo "HOCKEYAPP_APP_ID: ${HOCKEYAPP_APP_ID}"
+echo "HOCKEYAPP_NOTES: ${notes}"
+echo "HOCKEYAPP_NOTES_TYPE: ${notes_type}"
+echo "HOCKEYAPP_NOTIFY: ${notify}"
+echo "HOCKEYAPP_STATUS: ${status}"
+echo "HOCKEYAPP_MANDATORY: ${mandatory}"
+echo "HOCKEYAPP_TAGS: ${HOCKEYAPP_TAGS}"
+echo "HOCKEYAPP_COMMIT_SHA: ${HOCKEYAPP_COMMIT_SHA}"
+echo "HOCKEYAPP_BUILD_SERVER_URL: ${HOCKEYAPP_BUILD_SERVER_URL}"
+echo "HOCKEYAPP_REPOSITORY_URL: ${HOCKEYAPP_REPOSITORY_URL}"
 
 # IPA
-if [[ ! -f "$BITRISE_IPA_PATH" ]]; then
-    echo
-    echo "No IPA found to deploy. Terminating..."
-    echo
+if [[ ! -f "${BITRISE_IPA_PATH}" ]] ; then
+    write_section_to_formatted_output "# Error"
+    write_section_start_to_formatted_output '* No IPA found to deploy. Terminating...'
     echoStatusFailed
     exit 1
 fi
 
 # dSYM if provided
-if [[ $BITRISE_DSYM_PATH ]]; then
-  if [[ ! -f "$BITRISE_DSYM_PATH" ]]; then
-    echo
-    echo "No DSYM found to deploy, though path has been set. Terminating..."
-    echo
+if [ -z "${BITRISE_DSYM_PATH}" ] ; then
+  if [[ ! -f "${BITRISE_DSYM_PATH}" ]]; then
+    write_section_to_formatted_output "# Error"
+    write_section_start_to_formatted_output '* DSYM file not found to deploy, though path has been set. Terminating...'
     echoStatusFailed
     exit 1
   fi
 fi
 
 # App token
-if [[ ! $HOCKEYAPP_TOKEN ]]; then
-    echo
-    echo "No App token provided as environment variable. Terminating..."
-    echo
+if [ -z "${HOCKEYAPP_TOKEN}" ] ; then
+    write_section_to_formatted_output "# Error"
+    write_section_start_to_formatted_output '* No App token provided as environment variable. Terminating...'
     echoStatusFailed
     exit 1
 fi
 
 # App Id
-if [[ ! $HOCKEYAPP_APP_ID ]]; then
-    echo
-    echo "No App Id provided as environment variable. Terminating..."
-    echo
+if [ -z "${HOCKEYAPP_APP_ID}" ] ; then
+    write_section_to_formatted_output "# Error"
+    write_section_start_to_formatted_output '* No App Id provided as environment variable. Terminating...'
     echoStatusFailed
     exit 1
 fi
@@ -95,29 +104,34 @@ fi
 ###########################
 
 json=$(curl \
-  -F "ipa=@$BITRISE_IPA_PATH" \
-  -F "dsym=@$BITRISE_DSYM_PATH" \
-  -F "notes=$notes" \
-  -F "notes_type=$notes_type" \
-  -F "notify=$notify" \
-  -F "status=$status" \
-  -F "mandatory=$mandatory" \
-  -F "tags=$HOCKEYAPP_TAGS" \
-  -F "commit_sha=$HOCKEYAPP_COMMIT_SHA" \
-  -F "build_server_url=$HOCKEYAPP_BUILD_SERVER_URL" \
-  -F "repository_url=$HOCKEYAPP_REPOSITORY_URL" \
-  -H "X-HockeyAppToken: $HOCKEYAPP_TOKEN" \
-  https://rink.hockeyapp.net/api/2/apps/$HOCKEYAPP_APP_ID/app_versions/upload)
+  -F "ipa=@${BITRISE_IPA_PATH}" \
+  -F "dsym=@${BITRISE_DSYM_PATH}" \
+  -F "notes=${notes}" \
+  -F "notes_type=${notes_type}" \
+  -F "notify=${notify}" \
+  -F "status=${status}" \
+  -F "mandatory=${mandatory}" \
+  -F "tags=${HOCKEYAPP_TAGS}" \
+  -F "commit_sha=${HOCKEYAPP_COMMIT_SHA}" \
+  -F "build_server_url=${HOCKEYAPP_BUILD_SERVER_URL}" \
+  -F "repository_url=${HOCKEYAPP_REPOSITORY_URL}" \
+  -H "X-HockeyAppToken: ${HOCKEYAPP_TOKEN}" \
+  https://rink.hockeyapp.net/api/2/apps/${HOCKEYAPP_APP_ID}/app_versions/upload)
+curl_res=$?
 
+echo
 echo " --- Result ---"
-echo "$json"
-echo " --------------\n"
+echo " * cURL command exit code: ${curl_res}"
+echo " * response JSON: ${json}"
+echo " --------------"
+echo
 
 # error handling
 if [[ $json ]]; then
   errors=`ruby ./steps-utils-jsonval/parse_json.rb \
     --json-string="$json" \
     --prop=errors`
+  parse_res=$?
 else
   errors="No valid JSON result from request."
 fi
