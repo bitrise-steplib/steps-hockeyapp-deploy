@@ -197,7 +197,7 @@ if [ -z "${build_url}" ] ; then
 else
   build_url="[${build_url}](${build_url})"
 fi
-echo_string_to_formatted_output "* Build URL: **${build_url}**"
+echo_string_to_formatted_output "* Build (direct download) URL: **${build_url}**"
 if [ -z "${config_url}" ] ; then
   config_url='(empty/none)'
 else
