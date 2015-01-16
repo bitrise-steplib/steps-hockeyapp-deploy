@@ -185,20 +185,24 @@ echo "export HOCKEYAPP_DEPLOY_CONFIG_URL=\"${config_url}\"" >> ~/.bash_profile
 # final results
 write_section_to_formatted_output "# Success"
 write_section_to_formatted_output "## Generated Outputs"
-echo_string_to_formatted_output "* HOCKEYAPP_DEPLOY_STATUS: **${HOCKEYAPP_DEPLOY_STATUS}**"
+echo_string_to_formatted_output "* Deploy Result: **${HOCKEYAPP_DEPLOY_STATUS}**"
 if [ -z "${public_url}" ] ; then
   public_url='(empty/none)'
 else
   public_url="[${public_url}](${public_url})"
 fi
-echo_string_to_formatted_output "* HOCKEYAPP_DEPLOY_PUBLIC_URL: **${public_url}**"
+echo_string_to_formatted_output "* Public URL: **${public_url}**"
 if [ -z "${build_url}" ] ; then
   build_url='(empty/none)'
+else
+  build_url="[${build_url}](${build_url})"
 fi
-echo_string_to_formatted_output "* HOCKEYAPP_DEPLOY_BUILD_URL: **${build_url}**"
+echo_string_to_formatted_output "* Build URL: **${build_url}**"
 if [ -z "${config_url}" ] ; then
   config_url='(empty/none)'
+else
+  config_url="[${config_url}](${config_url})"
 fi
-echo_string_to_formatted_output "* HOCKEYAPP_DEPLOY_CONFIG_URL: **${config_url}**"
+echo_string_to_formatted_output "* Config URL: **${config_url}**"
 
 exit 0
