@@ -22,34 +22,34 @@ echo "" > "${formatted_output_file_path}"
 
 # default values
 
-if [ -z "${HOCKEYAPP_NOTES}" ] ; then
+notes=""
+if [ ! -z "${HOCKEYAPP_NOTES}" ] ; then
 	notes="${HOCKEYAPP_NOTES}"
-else
-	notes="Automatic build with Bitrise.io"
 fi
 
-if [ -z "${HOCKEYAPP_NOTES_TYPE}" ] ; then
+notes_type=0
+if [ ! -z "${HOCKEYAPP_NOTES_TYPE}" ] ; then
 	notes_type="${HOCKEYAPP_NOTES_TYPE}"
-else
-	notes_type=0
 fi
 
-if [ -z "${HOCKEYAPP_NOTIFY}" ] ; then
+notify=2
+if [ ! -z "${HOCKEYAPP_NOTIFY}" ] ; then
 	notify="${HOCKEYAPP_NOTIFY}"
-else
-	notify=2
 fi
 
-if [ -z "${HOCKEYAPP_STATUS}" ] ; then
+status=2
+if [ ! -z "${HOCKEYAPP_STATUS}" ] ; then
 	status="${HOCKEYAPP_STATUS}"
-else
-	status=2
 fi
 
-if [ -z "${HOCKEYAPP_MANDATORY}" ] ; then
-	mandatory="${HOCKEYAPP_MANDATORY}"
-else
-	mandatory=0
+# mandatory handling, with backward compatibility
+#  0 - not mandatory (default)
+#  1 - mandatory
+mandatory=0
+if [ ! -z "${HOCKEYAPP_MANDATORY}" ] ; then
+  if [[ "${HOCKEYAPP_MANDATORY}" == "1" || "${HOCKEYAPP_MANDATORY}" == "true" ]] ; then
+    mandatory=1
+  fi
 fi
 
 echo
@@ -66,6 +66,8 @@ echo "HOCKEYAPP_TAGS: ${HOCKEYAPP_TAGS}"
 echo "HOCKEYAPP_COMMIT_SHA: ${HOCKEYAPP_COMMIT_SHA}"
 echo "HOCKEYAPP_BUILD_SERVER_URL: ${HOCKEYAPP_BUILD_SERVER_URL}"
 echo "HOCKEYAPP_REPOSITORY_URL: ${HOCKEYAPP_REPOSITORY_URL}"
+echo
+
 
 # IPA
 if [[ ! -f "${BITRISE_IPA_PATH}" ]] ; then
@@ -76,8 +78,8 @@ if [[ ! -f "${BITRISE_IPA_PATH}" ]] ; then
 fi
 
 # dSYM if provided
-if [ -z "${BITRISE_DSYM_PATH}" ] ; then
-  if [[ ! -f "${BITRISE_DSYM_PATH}" ]]; then
+if [ ! -z "${BITRISE_DSYM_PATH}" ] ; then
+  if [[ ! -f "${BITRISE_DSYM_PATH}" ]] ; then
     write_section_to_formatted_output "# Error"
     write_section_start_to_formatted_output '* DSYM file not found to deploy, though path has been set. Terminating...'
     echoStatusFailed
@@ -134,7 +136,7 @@ if [ ${curl_res} -ne 0 ] ; then
 fi
 
 # error handling
-if [[ ${json} ]]; then
+if [[ ${json} ]] ; then
   errors=`ruby ./steps-utils-jsonval/parse_json.rb \
     --json-string="${json}" \
     --prop=errors`
@@ -186,6 +188,8 @@ write_section_to_formatted_output "## Generated Outputs"
 echo_string_to_formatted_output "* HOCKEYAPP_DEPLOY_STATUS: **${HOCKEYAPP_DEPLOY_STATUS}**"
 if [ -z "${public_url}" ] ; then
   public_url='(empty/none)'
+else
+  public_url="[${public_url}](${public_url})"
 fi
 echo_string_to_formatted_output "* HOCKEYAPP_DEPLOY_PUBLIC_URL: **${public_url}**"
 if [ -z "${build_url}" ] ; then

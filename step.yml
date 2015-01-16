@@ -1,81 +1,138 @@
 name: HockeyApp Deploy
 description: |
-  Bitrise step to deploy an iOS application to HockeyApp.
+  Deploy an iOS application to [HockeyApp](http://hockeyapp.net).
 
-  Register a HockeyApp account at [http://hockeyapp.net/](http://hockeyapp.net/)
+  Register a HockeyApp account at [http://hockeyapp.net/](http://hockeyapp.net)
   and create an app to utilize this step.
   You also need to create a *HockeyApp Token* for your app.
 website: https://github.com/bitrise-io/step-hockeyapp-deploy
+fork_url: https://github.com/bitrise-io/step-hockeyapp-deploy
 source:
   git: https://github.com/bitrise-io/step-hockeyapp-deploy.git
 host_os_tags:
   - osx-10.9
+  - osx-10.10
 type_tags:
   - deploy
-requires_admin_user: false
+  - HockeyApp
+is_requires_admin_user: false
 inputs:
-  - title: |
-      IPA file path
+  - 
+    title: "IPA file path"
     mapped_to: BITRISE_IPA_PATH
     is_expand: true
-  - title: |
-      (optional) dSYM file path
+    is_required: true
+  - 
+    title: "dSYM file path"
     mapped_to: BITRISE_DSYM_PATH
     is_expand: true
-  - title: |
-      Token to access the HockeyApp application (note that different access types exist when obtaining a token on your account page)
+    is_required: false
+  - 
+    title: "Token to access the HockeyApp application"
+    description: |
+      Note: different access types exist when obtaining a token on your account page.
     mapped_to: HOCKEYAPP_TOKEN
     is_expand: false
-  - title: |
+    is_required: true
+  - 
+    title: "HockeyApp ID"
+    description: |
       Identifier of the HockeyApp application
     mapped_to: HOCKEYAPP_APP_ID
     is_expand: false
-  - title: |
-      (optional) Additional notes to the deploy. default = "Automatic build with Bitrise."
+    is_required: true
+  - 
+    title: "Notes attached to the deploy"
+    description: |
+      Additional notes to the deploy.
     mapped_to: HOCKEYAPP_NOTES
     is_expand: true
-  - title: |
-      (optional) Notes type. Possible values: 0 - Textile (default), 1 - Markdown
+    is_required: false
+    value: "Deploy with HockeyApp Deploy Step."
+  - 
+    title: Notes type
+    description: |
+      Possible values:
+
+      * 0: Textile
+      * 1: Markdown
     mapped_to: HOCKEYAPP_NOTES_TYPE
     is_expand: false
-  - title: |
-      (optional) Sets who should be notified on deployment. Requires full-access tokens. Possible values: 0 - no testers, 1 - all testers that can install this app, 2 - all testers (default)
+    is_required: true
+    value_options: ["0", "1"]
+    value: "0"
+  - 
+    title: "Notify Testers?"
+    description: |
+      Sets who should be notified on deployment.
+      **Requires full-access tokens.**
+
+      Possible values:
+
+      * 0 - Don't notify testers
+      * 1 - Notify all testers that can install this app
+      * 2 - Notify all testers
     mapped_to: HOCKEYAPP_NOTIFY
     is_expand: false
-  - title: |
-      (optional) Download status. Requires full-access tokens. Possible values: 1 - not allow users to download the version, 2 - make the version available for download. (default)
+    is_required: true
+    value_options: ["0", "1", "2"]
+    value: "2"
+  - 
+    title: "Allow Download?"
+    description: |
+      Download status.
+      **Requires full-access tokens.**
+
+      Possible values:
+
+      * 1 - not allow users to download the version
+      * 2 - make the version available for download.
     mapped_to: HOCKEYAPP_STATUS
     is_expand: false
-  - title: |
-      (optional) Set if version is mandatory to install. 0 - not mandatory (default), 1 - mandatory
+    is_required: true
+    value: "2"
+    value_options: ["1", "2"]
+  - 
+    title: "Mandatory?"
+    description: |
+      Set if version is mandatory to install.
     mapped_to: HOCKEYAPP_MANDATORY
     is_expand: false
-  - title: |
-      (optional) Restrict download to comma-separated list of tags
+    is_required: true
+    value_options: ["true", "false"]
+    value: "false"
+  - 
+    title: "(optional) Restrict download: Tags"
+    description: |
+      Restrict download to comma-separated list of tags.
     mapped_to: HOCKEYAPP_TAGS
     is_expand: false
-  - title: |
-      (optional) Git commit sha for this build
+    is_required: false
+  - 
+    title: "(optional) Git commit sha for this build"
     mapped_to: HOCKEYAPP_COMMIT_SHA
     is_expand: true
-  - title: |
-      (optional) Set to the URL of the build job on your build server
+    is_required: false
+  - 
+    title: "(optional) Build job URL (on your build server)"
     mapped_to: HOCKEYAPP_BUILD_SERVER_URL
     is_expand: true
-  - title: |
-      (optional) Set to your source repository
+    is_required: false
+  - 
+    title: "(optional) Source Code Repository URL"
     mapped_to: HOCKEYAPP_REPOSITORY_URL
     is_expand: true
+    is_required: false
 outputs:
-  - title: |
-      Deployment result: 'success' or 'failed'
+  - 
+    title: "Deployment result: 'success' or 'failed'"
     mapped_to: HOCKEYAPP_DEPLOY_STATUS
-  - title: |
-      Public URL of the newly deployed version
+  - 
+    title: "Public URL of the newly deployed version"
     mapped_to: HOCKEYAPP_DEPLOY_PUBLIC_URL
-  - title: |
-      URL of the HockeyApp build
+  - 
+    title: "URL of the HockeyApp build"
     mapped_to: HOCKEYAPP_DEPLOY_BUILD_URL
-  - title: |
-      URL of the HockeyApp config view
+  - 
+    title: "URL of the HockeyApp config view"
     mapped_to: HOCKEYAPP_DEPLOY_CONFIG_URL
