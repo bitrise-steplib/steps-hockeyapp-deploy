@@ -38,7 +38,7 @@ inputs:
     is_expand: true
     is_required: true
   - 
-    title: "Token to access the HockeyApp application"
+    title: "API Token"
     description: |
       Note: different access types exist when obtaining a token on your account page.
       
@@ -57,7 +57,7 @@ inputs:
     is_expand: false
     is_required: true
   - 
-    title: "HockeyApp ID"
+    title: "App ID"
     description: |
       Identifier of the HockeyApp application
 
