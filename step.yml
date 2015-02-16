@@ -31,6 +31,18 @@ inputs:
     title: "Token to access the HockeyApp application"
     description: |
       Note: different access types exist when obtaining a token on your account page.
+      
+      ## Where to get the HockeyApp API Token?
+
+      Sign in to your [http://hockeyapp.net/](http://hockeyapp.net) account,
+      click on your username at the top right corner to get to the
+      *Manage Account* page. Select the *API Tokens* option on the left side
+      and if you don't have an appropriate API Token for your app or account
+      you can register one here.
+
+      You can see your registered API Tokens at the bottom of this page
+      at the *Active API Tokens* section. Copy and paste here the API Token
+      you want to use.
     mapped_to: HOCKEYAPP_TOKEN
     is_expand: false
     is_required: true
@@ -38,6 +50,14 @@ inputs:
     title: "HockeyApp ID"
     description: |
       Identifier of the HockeyApp application
+
+      ## Where to get the HockeyApp App ID?
+
+      If you didn't register your app on [http://hockeyapp.net/](http://hockeyapp.net)
+      you first have to do so.
+      Once the app is registered select it from the Apps list of the
+      Dashboard page and on the left side you'll find the **App ID**
+      of the app. Copy and paste it here.
     mapped_to: HOCKEYAPP_APP_ID
     is_expand: false
     is_required: true
