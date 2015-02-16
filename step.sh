@@ -110,7 +110,7 @@ fi
 
 ###########################
 
-json=$(curl --fail --silent \
+json=$(curl --fail \
   -F "ipa=@${BITRISE_IPA_PATH}" \
   ${dsym_api_param} \
   -F "notes=${notes}" \
