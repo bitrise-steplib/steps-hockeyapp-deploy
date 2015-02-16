@@ -80,7 +80,7 @@ fi
 # dSYM
 if [[ -z "${BITRISE_DSYM_PATH}" || ! -f "${BITRISE_DSYM_PATH}" ]] ; then
 	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output "* DSYM file not found to deploy. To generate debug symbols (dSYM) go to your Xcode Project's Settings - Build Settings - Debug Information Format and set it to DWARF with dSYM File."
+	write_section_start_to_formatted_output '* DSYM file not found to deploy. To generate debug symbols (dSYM) go to your Xcode Project Settings - `Build Settings - Debug Information Format` and set it to **DWARF with dSYM File**.'
 	echoStatusFailed
 	exit 1
 fi
