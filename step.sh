@@ -114,7 +114,6 @@ echo " (i) dsym_api_param: ${dsym_api_param}"
 
 json=$(curl --fail \
   -F "ipa=@${BITRISE_IPA_PATH}" \
-  # ${dsym_api_param} \
   -F "notes=${notes}" \
   -F "notes_type=${notes_type}" \
   -F "notify=${notify}" \
