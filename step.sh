@@ -48,7 +48,7 @@ fi
 mandatory=0
 if [ ! -z "${HOCKEYAPP_MANDATORY}" ] ; then
   if [[ "${HOCKEYAPP_MANDATORY}" == "1" || "${HOCKEYAPP_MANDATORY}" == "true" ]] ; then
-    mandatory=1
+	mandatory=1
   fi
 fi
 
@@ -71,43 +71,48 @@ echo
 
 # IPA
 if [[ ! -f "${BITRISE_IPA_PATH}" ]] ; then
-    write_section_to_formatted_output "# Error"
-    write_section_start_to_formatted_output '* No IPA found to deploy. Terminating...'
-    echoStatusFailed
-    exit 1
+	write_section_to_formatted_output "# Error"
+	write_section_start_to_formatted_output '* No IPA found to deploy. Terminating...'
+	echoStatusFailed
+	exit 1
 fi
 
 # dSYM if provided
 if [ ! -z "${BITRISE_DSYM_PATH}" ] ; then
   if [[ ! -f "${BITRISE_DSYM_PATH}" ]] ; then
-    write_section_to_formatted_output "# Error"
-    write_section_start_to_formatted_output '* DSYM file not found to deploy, though path has been set. Terminating...'
-    echoStatusFailed
-    exit 1
+	write_section_to_formatted_output "# Error"
+	write_section_start_to_formatted_output '* DSYM file not found to deploy, though path has been set. Terminating...'
+	echoStatusFailed
+	exit 1
   fi
 fi
 
 # App token
 if [ -z "${HOCKEYAPP_TOKEN}" ] ; then
-    write_section_to_formatted_output "# Error"
-    write_section_start_to_formatted_output '* No App token provided as environment variable. Terminating...'
-    echoStatusFailed
-    exit 1
+	write_section_to_formatted_output "# Error"
+	write_section_start_to_formatted_output '* No App token provided as environment variable. Terminating...'
+	echoStatusFailed
+	exit 1
 fi
 
 # App Id
 if [ -z "${HOCKEYAPP_APP_ID}" ] ; then
-    write_section_to_formatted_output "# Error"
-    write_section_start_to_formatted_output '* No App Id provided as environment variable. Terminating...'
-    echoStatusFailed
-    exit 1
+	write_section_to_formatted_output "# Error"
+	write_section_start_to_formatted_output '* No App Id provided as environment variable. Terminating...'
+	echoStatusFailed
+	exit 1
+fi
+
+dsym_api_param=""
+if [ ! -z "${BITRISE_DSYM_PATH}" ] ; then
+	dsym_api_param="-F \"dsym=@${BITRISE_DSYM_PATH}\""
 fi
 
 ###########################
 
-json=$(curl \
+json=$(curl --fail --silent \
   -F "ipa=@${BITRISE_IPA_PATH}" \
-  -F "dsym=@${BITRISE_DSYM_PATH}" \
+  ${dsym_api_param} \
   -F "notes=${notes}" \
   -F "notes_type=${notes_type}" \
   -F "notify=${notify}" \
@@ -138,11 +143,11 @@ fi
 # error handling
 if [[ ${json} ]] ; then
   errors=`ruby ./steps-utils-jsonval/parse_json.rb \
-    --json-string="${json}" \
-    --prop=errors`
+	--json-string="${json}" \
+	--prop=errors`
   parse_res=$?
   if [ ${parse_res} -ne 0 ] ; then
-    errors="Failed to parse the response JSON"
+	errors="Failed to parse the response JSON"
   fi
 else
   errors="No valid JSON result from request."
