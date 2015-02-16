@@ -25,8 +25,18 @@ inputs:
   - 
     title: "dSYM file path"
     mapped_to: BITRISE_DSYM_PATH
+    description: |
+      Although the dSYM is marked as optional in the HockeyApp
+      API documentations it seems that HockeyApp can't parse
+      the required App information from the IPA in case no
+      dSYM is generated (if dSYM generation is turned off
+      in the Xcode project settings).
+
+      To turn on dSYM generation open you Xcode
+      project, select *Project Settings - Build Settings - Debug Information Format*
+      and make sure it's set to the *DWARF with dSYM File* option.
     is_expand: true
-    is_required: false
+    is_required: true
   - 
     title: "Token to access the HockeyApp application"
     description: |

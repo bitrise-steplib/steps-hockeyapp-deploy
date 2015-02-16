@@ -70,22 +70,21 @@ echo
 
 
 # IPA
-if [[ ! -f "${BITRISE_IPA_PATH}" ]] ; then
+if [ ! -f "${BITRISE_IPA_PATH}" ] ; then
 	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* No IPA found to deploy. Terminating...'
+	write_section_start_to_formatted_output '* No IPA found to deploy.'
 	echoStatusFailed
 	exit 1
 fi
 
-# dSYM if provided
-if [ ! -z "${BITRISE_DSYM_PATH}" ] ; then
-  if [[ ! -f "${BITRISE_DSYM_PATH}" ]] ; then
+# dSYM
+if [[ -z "${BITRISE_DSYM_PATH}" || ! -f "${BITRISE_DSYM_PATH}" ]] ; then
 	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* DSYM file not found to deploy, though path has been set. Terminating...'
+	write_section_start_to_formatted_output "* DSYM file not found to deploy. To generate debug symbols (dSYM) go to your Xcode Project's Settings - Build Settings - Debug Information Format and set it to DWARF with dSYM File."
 	echoStatusFailed
 	exit 1
-  fi
 fi
+
 
 # App token
 if [ -z "${HOCKEYAPP_TOKEN}" ] ; then
@@ -103,17 +102,11 @@ if [ -z "${HOCKEYAPP_APP_ID}" ] ; then
 	exit 1
 fi
 
-dsym_api_param=""
-if [ ! -z "${BITRISE_DSYM_PATH}" ] ; then
-	dsym_api_param="-F \"dsym=@${BITRISE_DSYM_PATH}\""
-fi
-
-echo " (i) dsym_api_param: ${dsym_api_param}"
-
 ###########################
 
 json=$(curl --fail \
   -F "ipa=@${BITRISE_IPA_PATH}" \
+  -F "dsym=@${BITRISE_DSYM_PATH}" \
   -F "notes=${notes}" \
   -F "notes_type=${notes_type}" \
   -F "notify=${notify}" \
