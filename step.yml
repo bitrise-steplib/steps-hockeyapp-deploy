@@ -184,7 +184,7 @@ inputs:
       is_required: false
       is_dont_change_value: false
 outputs:
-  - deploy_status: ""
+  - HOCKEYAPP_DEPLOY_STATUS: ""
     opts:
       title: "Deployment result: 'success' or 'failed'"
       summary: ""
@@ -192,7 +192,7 @@ outputs:
       is_expand: false
       is_required: true
       is_dont_change_value: true
-  - deploy_public_url: ""
+  - HOCKEYAPP_DEPLOY_PUBLIC_URL: ""
     opts:
       title: "Public URL of the newly deployed version"
       summary: ""
@@ -200,7 +200,7 @@ outputs:
       is_expand: false
       is_required: true
       is_dont_change_value: true
-  - deploy_build_url: ""
+  - HOCKEYAPP_DEPLOY_BUILD_URL: ""
     opts:
       title: "URL of the HockeyApp build"
       summary: ""
@@ -208,7 +208,7 @@ outputs:
       is_expand: false
       is_required: true
       is_dont_change_value: true
-  - deploy_config_url: ""
+  - HOCKEYAPP_DEPLOY_CONFIG_URL: ""
     opts:
       title: "URL of the HockeyApp config view"
       summary: ""

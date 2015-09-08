@@ -5,9 +5,9 @@ source "${THIS_SCRIPTDIR}/_utils.sh"
 source "${THIS_SCRIPTDIR}/_formatted_output.sh"
 
 function echoStatusFailed {
-  envman add --key deploy_status --value "failed"
+  envman add --key HOCKEYAPP_DEPLOY_STATUS --value "failed"
   echo
-  echo 'deploy_status: "failed"'
+  echo 'HOCKEYAPP_DEPLOY_STATUS: "failed"'
   echo " --------------"
 }
 
@@ -156,15 +156,15 @@ fi
 
 # everything is OK
 
-export deploy_status="success"
-envman add --key deploy_status --value "success"
+export HOCKEYAPP_DEPLOY_STATUS="success"
+envman add --key HOCKEYAPP_DEPLOY_STATUS --value "success"
 
 # public url
 public_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=public_url`
 
-envman add --key deploy_public_url --value "${public_url}"
+envman add --key HOCKEYAPP_DEPLOY_PUBLIC_URL --value "${public_url}"
 
 
 # build url
@@ -172,20 +172,20 @@ build_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=build_url`
 
-envman add --key deploy_build_url --value "${build_url}"
+envman add --key HOCKEYAPP_DEPLOY_BUILD_URL --value "${build_url}"
 
 # config url
 config_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=config_url`
 
-envman add --key deploy_config_url --value "${config_url}"
+envman add --key HOCKEYAPP_DEPLOY_CONFIG_URL --value "${config_url}"
 
 
 # final results
 write_section_to_formatted_output "# Success"
 write_section_to_formatted_output "## Generated Outputs"
-echo_string_to_formatted_output "* Deploy Result: **${deploy_status}**"
+echo_string_to_formatted_output "* Deploy Result: **${HOCKEYAPP_DEPLOY_STATUS}**"
 if [ -z "${public_url}" ] ; then
   public_url='(empty/none)'
 else
