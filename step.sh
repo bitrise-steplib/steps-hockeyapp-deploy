@@ -55,7 +55,7 @@ fi
 echo
 echo "ipa_path: ${ipa_path}"
 echo "dsym_path: ${dsym_path}"
-echo "token: ${token}"
+echo "api_token: ${api_token}"
 echo "app_id: ${app_id}"
 echo "notes: ${notes}"
 echo "notes_type: ${notes_type}"
@@ -86,10 +86,10 @@ if [[ -z "${dsym_path}" || ! -f "${dsym_path}" ]] ; then
 fi
 
 
-# App token
-if [ -z "${token}" ] ; then
+# App api_token
+if [ -z "${api_token}" ] ; then
 	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* No App token provided as environment variable. Terminating...'
+	write_section_start_to_formatted_output '* No App api_token provided as environment variable. Terminating...'
 	echoStatusFailed
 	exit 1
 fi
@@ -116,7 +116,7 @@ json=$(curl --fail \
   -F "commit_sha=${commit_sha}" \
   -F "build_server_url=${build_server_url}" \
   -F "repository_url=${repository_url}" \
-  -H "X-HockeyAppToken: ${token}" \
+  -H "X-HockeyAppToken: ${api_token}" \
   https://rink.hockeyapp.net/api/2/apps/${app_id}/app_versions/upload)
 curl_res=$?
 

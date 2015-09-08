@@ -1,21 +1,16 @@
-format_version: 0.9.10
+format_version: 1.0.0
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 app:
   envs:
   # define these in your .bitrise.secrets.yml
-  - ipa_path:
-  - dsym_path:
-  - token:
+  - api_token:
   - app_id:
-  - notes:
-  - notes_type:
-  - notify:
-  - status:
-  - mandatory:
+  - BITRISE_IPA_PATH:
+  - BITRISE_DSYM_PATH:
+  - BITRISE_GIT_COMMIT:
+  - BITRISE_BUILD_URL:
   - tags:
-  - commit_sha:
-  - build_server_url:
   - repository_url:
 
 workflows:
@@ -23,3 +18,10 @@ workflows:
     steps:
     - path::./:
         inputs:
+        - notes: "Deploy with Bitrise HockeyApp Deploy Step."
+        - notes_type: "0"
+        - notify: "2"
+        - status: "2"
+        - mandatory: "false"
+        - commit_sha: "$BITRISE_GIT_COMMIT"
+        - build_server_url: "$BITRISE_BUILD_URL"

@@ -22,7 +22,7 @@ is_skippable: false
 dependencies: []
 run_if: ""
 inputs:
-  - ipa_path: ""
+  - ipa_path: "$BITRISE_IPA_PATH"
     opts:
       title: "IPA file path"
       summary: ""
@@ -30,7 +30,7 @@ inputs:
       is_expand: true
       is_required: true
       is_dont_change_value: false
-  - dsym_path: ""
+  - dsym_path: "$BITRISE_DSYM_PATH"
     opts:
       title: "dSYM file path"
       summary: ""
@@ -47,12 +47,12 @@ inputs:
       is_expand: true
       is_required: true
       is_dont_change_value: false
-  - token: ""
+  - api_token: ""
     opts:
       title: "API Token"
       summary: ""
       description: |-
-        Note: different access types exist when obtaining a token on your account page.
+        Note: different access types exist when obtaining a api_token on your account page.
 
         ## Where to get the HockeyApp API Token?
 
@@ -85,7 +85,7 @@ inputs:
       is_expand: false
       is_required: true
       is_dont_change_value: false
-  - notes: "Deploy with HockeyApp Deploy Step."
+  - notes: "Deploy with Bitrise HockeyApp Deploy Step."
     opts:
       title: "Notes attached to the deploy"
       summary: ""
@@ -159,7 +159,7 @@ inputs:
       is_expand: false
       is_required: false
       is_dont_change_value: false
-  - commit_sha: ""
+  - commit_sha: "$BITRISE_GIT_COMMIT"
     opts:
       title: "(optional) Git commit sha for this build"
       summary: ""
@@ -167,7 +167,7 @@ inputs:
       is_expand: true
       is_required: false
       is_dont_change_value: false
-  - build_server_url: ""
+  - build_server_url: "$BITRISE_BUILD_URL"
     opts:
       title: "(optional) Build job URL (on your build server)"
       summary: ""

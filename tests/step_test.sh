@@ -85,7 +85,7 @@ function is_not_empty {
 
 function test_env_cleanup {
   unset app_id
-  unset token
+  unset api_token
   unset ipa_path
   if [[ -f "$test_ipa_path" ]]; then
     rm $test_ipa_path
@@ -111,7 +111,7 @@ test_results_success_count=0
 test_results_error_count=0
 
 
-# [TEST] Call the command with token not set, 
+# [TEST] Call the command with api_token not set, 
 # it should raise an error message and exit
 # 
 (
@@ -128,8 +128,8 @@ test_results_error_count=0
   # The file should exist
   expect_success "File $test_ipa_path should exist" is_file_exist "$test_ipa_path"
 
-  # token should NOT exist
-  expect_error "token environment variable should NOT be set" is_not_empty "$token"
+  # api_token should NOT exist
+  expect_error "api_token environment variable should NOT be set" is_not_empty "$api_token"
   expect_success "app_id environment variable should be set" is_not_empty "$app_id"
   expect_success "ipa_path environment variable should be set" is_not_empty "$ipa_path"
 
@@ -148,7 +148,7 @@ inspect_test_result $test_result
   test_env_cleanup
 
   # Set env vars
-  export token="asd1234"
+  export api_token="asd1234"
   export ipa_path="$test_ipa_path"
 
   # Create test file
@@ -159,7 +159,7 @@ inspect_test_result $test_result
 
   # app_id should NOT exist
   expect_error "app_id environment variable should NOT be set" is_not_empty "$app_id"
-  expect_success "token environment variable should be set" is_not_empty "$token"
+  expect_success "api_token environment variable should be set" is_not_empty "$api_token"
   expect_success "ipa_path environment variable should be set" is_not_empty "$ipa_path"
 
   # Deploy the file
@@ -177,7 +177,7 @@ inspect_test_result $test_result
   test_env_cleanup
 
   # Set env vars
-  export token="asd1234"
+  export api_token="asd1234"
   export app_id="asd1234"
 
   # Create test file
@@ -188,7 +188,7 @@ inspect_test_result $test_result
 
   # ipa_path should NOT exist
   expect_success "app_id environment variable should be set" is_not_empty "$app_id"
-  expect_success "token environment variable should be set" is_not_empty "$token"
+  expect_success "api_token environment variable should be set" is_not_empty "$api_token"
   expect_error "ipa_path environment variable should NOT be set" is_not_empty "$ipa_path"
 
   # Deploy the file
@@ -206,7 +206,7 @@ inspect_test_result $test_result
   test_env_cleanup
 
   # Set env vars
-  export token="asd1234"
+  export api_token="asd1234"
   export app_id="asd1234"
   export ipa_path="$test_ipa_path"
 
@@ -220,7 +220,7 @@ inspect_test_result $test_result
 
   # ipa_path should NOT exist
   expect_success "app_id environment variable should be set" is_not_empty "$app_id"
-  expect_success "token environment variable should be set" is_not_empty "$token"
+  expect_success "api_token environment variable should be set" is_not_empty "$api_token"
   expect_success "ipa_path environment variable should be set" is_not_empty "$ipa_path"
 
   # Deploy the file
