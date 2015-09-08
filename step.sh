@@ -5,7 +5,7 @@ source "${THIS_SCRIPTDIR}/_utils.sh"
 source "${THIS_SCRIPTDIR}/_formatted_output.sh"
 
 function echoStatusFailed {
-  echo 'export deploy_status="failed"' >> ~/.bash_profile
+  envman add --key deploy_status --value "failed"
   echo
   echo 'deploy_status: "failed"'
   echo " --------------"
@@ -157,28 +157,29 @@ fi
 # everything is OK
 
 export deploy_status="success"
-echo 'export deploy_status="success"' >> ~/.bash_profile
+envman add --key deploy_status --value "success"
 
 # public url
 public_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=public_url`
 
-echo "export deploy_public_url=\"${public_url}\"" >> ~/.bash_profile
+envman add --key deploy_public_url --value "${public_url}"
+
 
 # build url
 build_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=build_url`
 
-echo "export deploy_build_url=\"${build_url}\"" >> ~/.bash_profile
+envman add --key deploy_build_url --value "${build_url}"
 
 # config url
 config_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=config_url`
 
-echo "export deploy_config_url=\"${config_url}\"" >> ~/.bash_profile
+envman add --key deploy_config_url --value "${config_url}"
 
 
 # final results
