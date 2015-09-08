@@ -84,9 +84,9 @@ function is_not_empty {
 }
 
 function test_env_cleanup {
-  unset HOCKEYAPP_APP_ID
-  unset HOCKEYAPP_TOKEN
-  unset BITRISE_IPA_PATH
+  unset app_id
+  unset token
+  unset ipa_path
   if [[ -f "$test_ipa_path" ]]; then
     rm $test_ipa_path
   fi
@@ -111,7 +111,7 @@ test_results_success_count=0
 test_results_error_count=0
 
 
-# [TEST] Call the command with HOCKEYAPP_TOKEN not set, 
+# [TEST] Call the command with token not set, 
 # it should raise an error message and exit
 # 
 (
@@ -119,8 +119,8 @@ test_results_error_count=0
   test_env_cleanup
 
   # Set env vars
-  export HOCKEYAPP_APP_ID="dsa4321"
-  export BITRISE_IPA_PATH="$test_ipa_path"
+  export app_id="dsa4321"
+  export ipa_path="$test_ipa_path"
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -128,10 +128,10 @@ test_results_error_count=0
   # The file should exist
   expect_success "File $test_ipa_path should exist" is_file_exist "$test_ipa_path"
 
-  # HOCKEYAPP_TOKEN should NOT exist
-  expect_error "HOCKEYAPP_TOKEN environment variable should NOT be set" is_not_empty "$HOCKEYAPP_TOKEN"
-  expect_success "HOCKEYAPP_APP_ID environment variable should be set" is_not_empty "$HOCKEYAPP_APP_ID"
-  expect_success "BITRISE_IPA_PATH environment variable should be set" is_not_empty "$BITRISE_IPA_PATH"
+  # token should NOT exist
+  expect_error "token environment variable should NOT be set" is_not_empty "$token"
+  expect_success "app_id environment variable should be set" is_not_empty "$app_id"
+  expect_success "ipa_path environment variable should be set" is_not_empty "$ipa_path"
 
   # Deploy the file
   expect_error "The command should be called, but should not complete sucessfully" run_target_command  
@@ -140,7 +140,7 @@ test_result=$?
 inspect_test_result $test_result
 
 
-# [TEST] Call the command with HOCKEYAPP_APP_ID not set, 
+# [TEST] Call the command with app_id not set, 
 # it should raise an error message and exit
 # 
 (
@@ -148,8 +148,8 @@ inspect_test_result $test_result
   test_env_cleanup
 
   # Set env vars
-  export HOCKEYAPP_TOKEN="asd1234"
-  export BITRISE_IPA_PATH="$test_ipa_path"
+  export token="asd1234"
+  export ipa_path="$test_ipa_path"
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -157,10 +157,10 @@ inspect_test_result $test_result
   # The file should exist
   expect_success "File $test_ipa_path should exist" is_file_exist "$test_ipa_path"
 
-  # HOCKEYAPP_APP_ID should NOT exist
-  expect_error "HOCKEYAPP_APP_ID environment variable should NOT be set" is_not_empty "$HOCKEYAPP_APP_ID"
-  expect_success "HOCKEYAPP_TOKEN environment variable should be set" is_not_empty "$HOCKEYAPP_TOKEN"
-  expect_success "BITRISE_IPA_PATH environment variable should be set" is_not_empty "$BITRISE_IPA_PATH"
+  # app_id should NOT exist
+  expect_error "app_id environment variable should NOT be set" is_not_empty "$app_id"
+  expect_success "token environment variable should be set" is_not_empty "$token"
+  expect_success "ipa_path environment variable should be set" is_not_empty "$ipa_path"
 
   # Deploy the file
   expect_error "The command should be called, but should not complete sucessfully" run_target_command 
@@ -169,7 +169,7 @@ test_result=$?
 inspect_test_result $test_result
 
 
-# [TEST] Call the command with BITRISE_IPA_PATH NOT set, 
+# [TEST] Call the command with ipa_path NOT set, 
 # it should raise an error message and exit
 # 
 (
@@ -177,8 +177,8 @@ inspect_test_result $test_result
   test_env_cleanup
 
   # Set env vars
-  export HOCKEYAPP_TOKEN="asd1234"
-  export HOCKEYAPP_APP_ID="asd1234"
+  export token="asd1234"
+  export app_id="asd1234"
 
   # Create test file
   print_and_do_command echo 'test file content' > "$test_ipa_path"
@@ -186,10 +186,10 @@ inspect_test_result $test_result
   # The file should exist
   expect_success "File $test_ipa_path should exist" is_file_exist "$test_ipa_path"
 
-  # BITRISE_IPA_PATH should NOT exist
-  expect_success "HOCKEYAPP_APP_ID environment variable should be set" is_not_empty "$HOCKEYAPP_APP_ID"
-  expect_success "HOCKEYAPP_TOKEN environment variable should be set" is_not_empty "$HOCKEYAPP_TOKEN"
-  expect_error "BITRISE_IPA_PATH environment variable should NOT be set" is_not_empty "$BITRISE_IPA_PATH"
+  # ipa_path should NOT exist
+  expect_success "app_id environment variable should be set" is_not_empty "$app_id"
+  expect_success "token environment variable should be set" is_not_empty "$token"
+  expect_error "ipa_path environment variable should NOT be set" is_not_empty "$ipa_path"
 
   # Deploy the file
   expect_error "The command should be called, but should not complete sucessfully" run_target_command
@@ -206,22 +206,22 @@ inspect_test_result $test_result
   test_env_cleanup
 
   # Set env vars
-  export HOCKEYAPP_TOKEN="asd1234"
-  export HOCKEYAPP_APP_ID="asd1234"
-  export BITRISE_IPA_PATH="$test_ipa_path"
+  export token="asd1234"
+  export app_id="asd1234"
+  export ipa_path="$test_ipa_path"
 
   # remove test file if exists
-  if [[ -f "$BITRISE_IPA_PATH" ]]; then
-    rm $BITRISE_IPA_PATH
+  if [[ -f "$ipa_path" ]]; then
+    rm $ipa_path
   fi
 
   # The file should NOT exist
-  expect_error "File $BITRISE_IPA_PATH should NOT exist" is_file_exist "$BITRISE_IPA_PATH"
+  expect_error "File $ipa_path should NOT exist" is_file_exist "$ipa_path"
 
-  # BITRISE_IPA_PATH should NOT exist
-  expect_success "HOCKEYAPP_APP_ID environment variable should be set" is_not_empty "$HOCKEYAPP_APP_ID"
-  expect_success "HOCKEYAPP_TOKEN environment variable should be set" is_not_empty "$HOCKEYAPP_TOKEN"
-  expect_success "BITRISE_IPA_PATH environment variable should be set" is_not_empty "$BITRISE_IPA_PATH"
+  # ipa_path should NOT exist
+  expect_success "app_id environment variable should be set" is_not_empty "$app_id"
+  expect_success "token environment variable should be set" is_not_empty "$token"
+  expect_success "ipa_path environment variable should be set" is_not_empty "$ipa_path"
 
   # Deploy the file
   expect_error "The command should be called, but should not complete sucessfully" run_target_command
