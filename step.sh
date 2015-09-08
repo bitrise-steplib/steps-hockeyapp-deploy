@@ -5,9 +5,9 @@ source "${THIS_SCRIPTDIR}/_utils.sh"
 source "${THIS_SCRIPTDIR}/_formatted_output.sh"
 
 function echoStatusFailed {
-  echo 'export HOCKEYAPP_DEPLOY_STATUS="failed"' >> ~/.bash_profile
+  echo 'export deploy_status="failed"' >> ~/.bash_profile
   echo
-  echo 'HOCKEYAPP_DEPLOY_STATUS: "failed"'
+  echo 'deploy_status: "failed"'
   echo " --------------"
 }
 
@@ -23,54 +23,54 @@ echo "" > "${formatted_output_file_path}"
 # default values
 
 notes=""
-if [ ! -z "${HOCKEYAPP_NOTES}" ] ; then
-	notes="${HOCKEYAPP_NOTES}"
+if [ ! -z "${notes}" ] ; then
+	notes="${notes}"
 fi
 
 notes_type=0
-if [ ! -z "${HOCKEYAPP_NOTES_TYPE}" ] ; then
-	notes_type="${HOCKEYAPP_NOTES_TYPE}"
+if [ ! -z "${notes_type}" ] ; then
+	notes_type="${notes_type}"
 fi
 
 notify=2
-if [ ! -z "${HOCKEYAPP_NOTIFY}" ] ; then
-	notify="${HOCKEYAPP_NOTIFY}"
+if [ ! -z "${notify}" ] ; then
+	notify="${notify}"
 fi
 
 status=2
-if [ ! -z "${HOCKEYAPP_STATUS}" ] ; then
-	status="${HOCKEYAPP_STATUS}"
+if [ ! -z "${status}" ] ; then
+	status="${status}"
 fi
 
 # mandatory handling, with backward compatibility
 #  0 - not mandatory (default)
 #  1 - mandatory
 mandatory=0
-if [ ! -z "${HOCKEYAPP_MANDATORY}" ] ; then
-  if [[ "${HOCKEYAPP_MANDATORY}" == "1" || "${HOCKEYAPP_MANDATORY}" == "true" ]] ; then
+if [ ! -z "${mandatory}" ] ; then
+  if [[ "${mandatory}" == "1" || "${mandatory}" == "true" ]] ; then
 	mandatory=1
   fi
 fi
 
 echo
-echo "BITRISE_IPA_PATH: ${BITRISE_IPA_PATH}"
-echo "BITRISE_DSYM_PATH: ${BITRISE_DSYM_PATH}"
-echo "HOCKEYAPP_TOKEN: ${HOCKEYAPP_TOKEN}"
-echo "HOCKEYAPP_APP_ID: ${HOCKEYAPP_APP_ID}"
-echo "HOCKEYAPP_NOTES: ${notes}"
-echo "HOCKEYAPP_NOTES_TYPE: ${notes_type}"
-echo "HOCKEYAPP_NOTIFY: ${notify}"
-echo "HOCKEYAPP_STATUS: ${status}"
-echo "HOCKEYAPP_MANDATORY: ${mandatory}"
-echo "HOCKEYAPP_TAGS: ${HOCKEYAPP_TAGS}"
-echo "HOCKEYAPP_COMMIT_SHA: ${HOCKEYAPP_COMMIT_SHA}"
-echo "HOCKEYAPP_BUILD_SERVER_URL: ${HOCKEYAPP_BUILD_SERVER_URL}"
-echo "HOCKEYAPP_REPOSITORY_URL: ${HOCKEYAPP_REPOSITORY_URL}"
+echo "ipa_path: ${ipa_path}"
+echo "dsym_path: ${dsym_path}"
+echo "token: ${token}"
+echo "app_id: ${app_id}"
+echo "notes: ${notes}"
+echo "notes_type: ${notes_type}"
+echo "notify: ${notify}"
+echo "status: ${status}"
+echo "mandatory: ${mandatory}"
+echo "tags: ${tags}"
+echo "commit_sha: ${commit_sha}"
+echo "build_server_url: ${build_server_url}"
+echo "repository_url: ${repository_url}"
 echo
 
 
 # IPA
-if [ ! -f "${BITRISE_IPA_PATH}" ] ; then
+if [ ! -f "${ipa_path}" ] ; then
 	write_section_to_formatted_output "# Error"
 	write_section_start_to_formatted_output '* No IPA found to deploy.'
 	echoStatusFailed
@@ -78,7 +78,7 @@ if [ ! -f "${BITRISE_IPA_PATH}" ] ; then
 fi
 
 # dSYM
-if [[ -z "${BITRISE_DSYM_PATH}" || ! -f "${BITRISE_DSYM_PATH}" ]] ; then
+if [[ -z "${dsym_path}" || ! -f "${dsym_path}" ]] ; then
 	write_section_to_formatted_output "# Error"
 	write_section_start_to_formatted_output '* DSYM file not found to deploy. To generate debug symbols (dSYM) go to your Xcode Project Settings - `Build Settings - Debug Information Format` and set it to **DWARF with dSYM File**.'
 	echoStatusFailed
@@ -87,7 +87,7 @@ fi
 
 
 # App token
-if [ -z "${HOCKEYAPP_TOKEN}" ] ; then
+if [ -z "${token}" ] ; then
 	write_section_to_formatted_output "# Error"
 	write_section_start_to_formatted_output '* No App token provided as environment variable. Terminating...'
 	echoStatusFailed
@@ -95,7 +95,7 @@ if [ -z "${HOCKEYAPP_TOKEN}" ] ; then
 fi
 
 # App Id
-if [ -z "${HOCKEYAPP_APP_ID}" ] ; then
+if [ -z "${app_id}" ] ; then
 	write_section_to_formatted_output "# Error"
 	write_section_start_to_formatted_output '* No App Id provided as environment variable. Terminating...'
 	echoStatusFailed
@@ -105,19 +105,19 @@ fi
 ###########################
 
 json=$(curl --fail \
-  -F "ipa=@${BITRISE_IPA_PATH}" \
-  -F "dsym=@${BITRISE_DSYM_PATH}" \
+  -F "ipa=@${ipa_path}" \
+  -F "dsym=@${dsym_path}" \
   -F "notes=${notes}" \
   -F "notes_type=${notes_type}" \
   -F "notify=${notify}" \
   -F "status=${status}" \
   -F "mandatory=${mandatory}" \
-  -F "tags=${HOCKEYAPP_TAGS}" \
-  -F "commit_sha=${HOCKEYAPP_COMMIT_SHA}" \
-  -F "build_server_url=${HOCKEYAPP_BUILD_SERVER_URL}" \
-  -F "repository_url=${HOCKEYAPP_REPOSITORY_URL}" \
-  -H "X-HockeyAppToken: ${HOCKEYAPP_TOKEN}" \
-  https://rink.hockeyapp.net/api/2/apps/${HOCKEYAPP_APP_ID}/app_versions/upload)
+  -F "tags=${tags}" \
+  -F "commit_sha=${commit_sha}" \
+  -F "build_server_url=${build_server_url}" \
+  -F "repository_url=${repository_url}" \
+  -H "X-HockeyAppToken: ${token}" \
+  https://rink.hockeyapp.net/api/2/apps/${app_id}/app_versions/upload)
 curl_res=$?
 
 echo
@@ -156,35 +156,35 @@ fi
 
 # everything is OK
 
-export HOCKEYAPP_DEPLOY_STATUS="success"
-echo 'export HOCKEYAPP_DEPLOY_STATUS="success"' >> ~/.bash_profile
+export deploy_status="success"
+echo 'export deploy_status="success"' >> ~/.bash_profile
 
 # public url
 public_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=public_url`
 
-echo "export HOCKEYAPP_DEPLOY_PUBLIC_URL=\"${public_url}\"" >> ~/.bash_profile
+echo "export deploy_public_url=\"${public_url}\"" >> ~/.bash_profile
 
 # build url
 build_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=build_url`
 
-echo "export HOCKEYAPP_DEPLOY_BUILD_URL=\"${build_url}\"" >> ~/.bash_profile
+echo "export deploy_build_url=\"${build_url}\"" >> ~/.bash_profile
 
 # config url
 config_url=`ruby ./steps-utils-jsonval/parse_json.rb \
   --json-string="$json" \
   --prop=config_url`
 
-echo "export HOCKEYAPP_DEPLOY_CONFIG_URL=\"${config_url}\"" >> ~/.bash_profile
+echo "export deploy_config_url=\"${config_url}\"" >> ~/.bash_profile
 
 
 # final results
 write_section_to_formatted_output "# Success"
 write_section_to_formatted_output "## Generated Outputs"
-echo_string_to_formatted_output "* Deploy Result: **${HOCKEYAPP_DEPLOY_STATUS}**"
+echo_string_to_formatted_output "* Deploy Result: **${deploy_status}**"
 if [ -z "${public_url}" ] ; then
   public_url='(empty/none)'
 else

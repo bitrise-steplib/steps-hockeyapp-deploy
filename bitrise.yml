@@ -1,0 +1,25 @@
+format_version: 0.9.10
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+
+app:
+  envs:
+  # define these in your .bitrise.secrets.yml
+  - ipa_path:
+  - dsym_path:
+  - token:
+  - app_id:
+  - notes:
+  - notes_type:
+  - notify:
+  - status:
+  - mandatory:
+  - tags:
+  - commit_sha:
+  - build_server_url:
+  - repository_url:
+
+workflows:
+  test:
+    steps:
+    - path::./:
+        inputs:
