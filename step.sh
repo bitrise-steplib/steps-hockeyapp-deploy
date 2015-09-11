@@ -136,7 +136,7 @@ fi
 
 # error handling
 if [[ ${json} ]] ; then
-  errors=`ruby ./steps-utils-jsonval/parse_json.rb \
+  errors=`ruby "${THIS_SCRIPTDIR}/steps-utils-jsonval/parse_json.rb" \
 	--json-string="${json}" \
 	--prop=errors`
   parse_res=$?
@@ -160,7 +160,7 @@ export HOCKEYAPP_DEPLOY_STATUS="success"
 envman add --key HOCKEYAPP_DEPLOY_STATUS --value "success"
 
 # public url
-public_url=`ruby ./steps-utils-jsonval/parse_json.rb \
+public_url=`ruby "${THIS_SCRIPTDIR}/steps-utils-jsonval/parse_json.rb" \
   --json-string="$json" \
   --prop=public_url`
 
@@ -168,14 +168,14 @@ envman add --key HOCKEYAPP_DEPLOY_PUBLIC_URL --value "${public_url}"
 
 
 # build url
-build_url=`ruby ./steps-utils-jsonval/parse_json.rb \
+build_url=`ruby "${THIS_SCRIPTDIR}/steps-utils-jsonval/parse_json.rb" \
   --json-string="$json" \
   --prop=build_url`
 
 envman add --key HOCKEYAPP_DEPLOY_BUILD_URL --value "${build_url}"
 
 # config url
-config_url=`ruby ./steps-utils-jsonval/parse_json.rb \
+config_url=`ruby "${THIS_SCRIPTDIR}/steps-utils-jsonval/parse_json.rb" \
   --json-string="$json" \
   --prop=config_url`
 
