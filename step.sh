@@ -19,37 +19,13 @@ function CLEANUP_ON_ERROR_FN {
 # init / cleanup the formatted output
 echo "" > "${formatted_output_file_path}"
 
-
-# default values
-
-notes=""
-if [ ! -z "${notes}" ] ; then
-	notes="${notes}"
-fi
-
-notes_type=0
-if [ ! -z "${notes_type}" ] ; then
-	notes_type="${notes_type}"
-fi
-
-notify=2
-if [ ! -z "${notify}" ] ; then
-	notify="${notify}"
-fi
-
-status=2
-if [ ! -z "${status}" ] ; then
-	status="${status}"
-fi
-
 # mandatory handling, with backward compatibility
 #  0 - not mandatory (default)
 #  1 - mandatory
-mandatory=0
-if [ ! -z "${mandatory}" ] ; then
-  if [[ "${mandatory}" == "1" || "${mandatory}" == "true" ]] ; then
-	mandatory=1
-  fi
+if [[ "${mandatory}" == "1" || "${mandatory}" == "true" ]] ; then
+  mandatory=1
+else
+  mandatory=0
 fi
 
 echo

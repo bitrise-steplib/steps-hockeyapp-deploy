@@ -18,10 +18,21 @@ workflows:
     steps:
     - path::./:
         inputs:
-        - notes: "Deploy with Bitrise HockeyApp Deploy Step."
-        - notes_type: "0"
+        - notes: |-
+            Test release notes.
+
+            **This should be markdown bold**
+        - notes_type: "1"
         - notify: "2"
         - status: "2"
         - mandatory: "false"
         - commit_sha: "$BITRISE_GIT_COMMIT"
         - build_server_url: "$BITRISE_BUILD_URL"
+    - script:
+        inputs:
+        - content: |-
+            #!/bin/bash
+            echo "HOCKEYAPP_DEPLOY_STATUS: ${HOCKEYAPP_DEPLOY_STATUS}"
+            echo "HOCKEYAPP_DEPLOY_PUBLIC_URL: ${HOCKEYAPP_DEPLOY_PUBLIC_URL}"
+            echo "HOCKEYAPP_DEPLOY_BUILD_URL: ${HOCKEYAPP_DEPLOY_BUILD_URL}"
+            echo "HOCKEYAPP_DEPLOY_CONFIG_URL: ${HOCKEYAPP_DEPLOY_CONFIG_URL}"

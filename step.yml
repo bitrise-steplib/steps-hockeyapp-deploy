@@ -132,11 +132,12 @@ inputs:
       summary: ""
       description: |
         Download status.
+
         **Requires full-access tokens.**
 
         Possible values:
 
-        * 1 - not allow users to download the version
+        * 1 - do not allow users to download the version
         * 2 - make the version available for download.
       value_options: ["1", "2"]
       is_expand: false
