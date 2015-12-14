@@ -14,7 +14,8 @@ support_url: https://github.com/bitrise-io/steps-hockeyapp-deploy/issues
 host_os_tags:
   - osx-10.9
   - osx-10.10
-project_type_tags: []
+project_type_tags:
+  - ios
 type_tags:
   - deploy
   - HockeyApp
