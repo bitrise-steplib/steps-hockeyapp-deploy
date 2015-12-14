@@ -75,21 +75,25 @@ inputs:
       is_dont_change_value: false
   - app_id: ""
     opts:
-      title: "App ID"
+      title: "HockeyApp: App ID"
       summary: ""
       description: |-
-        Identifier of the HockeyApp application
+        **Important:**
+        *If no App ID is specified HockeyApp will attach the build
+        to an app on HockeyApp based on the bundle ID, or create a new app on HockeyApp
+        if it does not match any existing HockeyApp app's bundle ID.*
+
+        *If you set the App ID the build will be uploaded for the specified
+        HockeyApp app/project!*
 
         ## Where to get the HockeyApp App ID?
 
         If you didn't register your app on [http://hockeyapp.net/](http://hockeyapp.net)
-        you first have to do so.
-        Once the app is registered select it from the Apps list of the
+        you first have to do so to get an App ID.
+
+        Once the app is registered select it from the Apps list on the
         Dashboard page and on the left side you'll find the **App ID**
         of the app. Copy and paste it here.
-
-          If app_id is provided the ipa will be upload to the specified app on HockeyApp,
-          otherwise HockeyApp will decide based on the bundle id, if it's a new app, or update.
       is_expand: true
       is_required: false
       is_dont_change_value: false
