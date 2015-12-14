@@ -1,8 +1,6 @@
 #!/bin/bash
 
 THIS_SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${THIS_SCRIPTDIR}/_utils.sh"
-source "${THIS_SCRIPTDIR}/_formatted_output.sh"
 
 function echoStatusFailed {
   envman add --key HOCKEYAPP_DEPLOY_STATUS --value "failed"
@@ -11,13 +9,6 @@ function echoStatusFailed {
   echo " --------------"
 }
 
-function CLEANUP_ON_ERROR_FN {
-  write_section_to_formatted_output "# Error"
-  echo_string_to_formatted_output "See the logs for more details"
-}
-
-# init / cleanup the formatted output
-echo "" > "${formatted_output_file_path}"
 
 # mandatory handling, with backward compatibility
 #  0 - not mandatory (default)
@@ -28,72 +19,75 @@ else
   mandatory=0
 fi
 
-echo
-echo "ipa_path: ${ipa_path}"
-echo "dsym_path: ${dsym_path}"
-echo "api_token: ${api_token}"
-echo "app_id: ${app_id}"
-echo "notes: ${notes}"
-echo "notes_type: ${notes_type}"
-echo "notify: ${notify}"
-echo "status: ${status}"
-echo "mandatory: ${mandatory}"
-echo "tags: ${tags}"
-echo "commit_sha: ${commit_sha}"
-echo "build_server_url: ${build_server_url}"
-echo "repository_url: ${repository_url}"
-echo
-
 
 # IPA
 if [ ! -f "${ipa_path}" ] ; then
-	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* No IPA found to deploy.'
-	echoStatusFailed
-	exit 1
+  echo "# Error"
+  echo '* No IPA found to deploy.'
+  echoStatusFailed
+  exit 1
 fi
 
 # dSYM
 if [[ -z "${dsym_path}" || ! -f "${dsym_path}" ]] ; then
-	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* DSYM file not found to deploy. To generate debug symbols (dSYM) go to your Xcode Project Settings - `Build Settings - Debug Information Format` and set it to **DWARF with dSYM File**.'
+	echo "# Error"
+	echo '* DSYM file not found to deploy. To generate debug symbols (dSYM) go to your Xcode Project Settings - `Build Settings - Debug Information Format` and set it to **DWARF with dSYM File**.'
 	echoStatusFailed
 	exit 1
 fi
-
 
 # App api_token
 if [ -z "${api_token}" ] ; then
-	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* No App api_token provided as environment variable. Terminating...'
-	echoStatusFailed
-	exit 1
+  echo "# Error"
+  echo '* No App api_token provided as environment variable. Terminating...'
+  echoStatusFailed
+  exit 1
 fi
 
-# App Id
-if [ -z "${app_id}" ] ; then
-	write_section_to_formatted_output "# Error"
-	write_section_start_to_formatted_output '* No App Id provided as environment variable. Terminating...'
-	echoStatusFailed
-	exit 1
-fi
+echo
+echo "========== Configs =========="
+echo "* ipa_path: ${ipa_path}"
+echo "* dsym_path: ${dsym_path}"
+echo "* api_token: ***"
+echo "* app_id: ${app_id}"
+echo "* notes: ${notes}"
+echo "* notes_type: ${notes_type}"
+echo "* notify: ${notify}"
+echo "* status: ${status}"
+echo "* mandatory: ${mandatory}"
+echo "* tags: ${tags}"
+echo "* commit_sha: ${commit_sha}"
+echo "* build_server_url: ${build_server_url}"
+echo "* repository_url: ${repository_url}"
+echo
 
 ###########################
 
-json=$(curl --fail \
-  -F "ipa=@${ipa_path}" \
-  -F "dsym=@${dsym_path}" \
-  -F "notes=${notes}" \
-  -F "notes_type=${notes_type}" \
-  -F "notify=${notify}" \
-  -F "status=${status}" \
-  -F "mandatory=${mandatory}" \
-  -F "tags=${tags}" \
-  -F "commit_sha=${commit_sha}" \
-  -F "build_server_url=${build_server_url}" \
-  -F "repository_url=${repository_url}" \
-  -H "X-HockeyAppToken: ${api_token}" \
-  https://rink.hockeyapp.net/api/2/apps/${app_id}/app_versions/upload)
+curl_cmd="curl --fail"
+curl_cmd="$curl_cmd -F \"ipa=@${ipa_path}\""
+curl_cmd="$curl_cmd -F \"dsym=@${dsym_path}\""
+curl_cmd="$curl_cmd -F \"notes=${notes}\""
+curl_cmd="$curl_cmd -F \"notes_type=${notes_type}\""
+curl_cmd="$curl_cmd -F \"notify=${notify}\""
+curl_cmd="$curl_cmd -F \"status=${status}\""
+curl_cmd="$curl_cmd -F \"mandatory=${mandatory}\""
+curl_cmd="$curl_cmd -F \"tags=${tags}\""
+curl_cmd="$curl_cmd -F \"commit_sha=${commit_sha}\""
+curl_cmd="$curl_cmd -F \"build_server_url=${build_server_url}\""
+curl_cmd="$curl_cmd -F \"repository_url=${repository_url}\""
+curl_cmd="$curl_cmd -H \"X-HockeyAppToken: ${api_token}\""
+if [ -z "${app_id}" ] ; then
+  curl_cmd="$curl_cmd https://rink.hockeyapp.net/api/2/apps/upload"
+else
+  curl_cmd="$curl_cmd https://rink.hockeyapp.net/api/2/apps/${app_id}/app_versions/upload"
+fi
+
+echo
+echo "=> Curl:"
+echo '$' $curl_cmd
+echo
+
+json=$(eval $curl_cmd)
 curl_res=$?
 
 echo
@@ -104,8 +98,8 @@ echo " --------------"
 echo
 
 if [ ${curl_res} -ne 0 ] ; then
-  write_section_to_formatted_output "# Error"
-  write_section_start_to_formatted_output '* cURL command exit code not zero!'
+  echo "# Error"
+  echo '* cURL command exit code not zero!'
   echoStatusFailed
   exit 1
 fi
@@ -113,34 +107,33 @@ fi
 # error handling
 if [[ ${json} ]] ; then
   errors=`ruby "${THIS_SCRIPTDIR}/steps-utils-jsonval/parse_json.rb" \
-	--json-string="${json}" \
-	--prop=errors`
+  --json-string="${json}" \
+  --prop=errors`
   parse_res=$?
   if [ ${parse_res} -ne 0 ] ; then
-	errors="Failed to parse the response JSON"
+     errors="Failed to parse the response JSON"
   fi
 else
   errors="No valid JSON result from request."
 fi
 
 if [[ ${errors} ]]; then
-  write_section_to_formatted_output "# Error"
-  write_section_start_to_formatted_output "* ${errors}"
+  echo "# Error"
+  echo "* ${errors}"
   echoStatusFailed
   exit 1
 fi
 
 # everything is OK
 
-export HOCKEYAPP_DEPLOY_STATUS="success"
-envman add --key HOCKEYAPP_DEPLOY_STATUS --value "success"
+envman add --key "HOCKEYAPP_DEPLOY_STATUS" --value "success"
 
 # public url
 public_url=`ruby "${THIS_SCRIPTDIR}/steps-utils-jsonval/parse_json.rb" \
   --json-string="$json" \
   --prop=public_url`
 
-envman add --key HOCKEYAPP_DEPLOY_PUBLIC_URL --value "${public_url}"
+envman add --key "HOCKEYAPP_DEPLOY_PUBLIC_URL" --value "${public_url}"
 
 
 # build url
@@ -148,37 +141,37 @@ build_url=`ruby "${THIS_SCRIPTDIR}/steps-utils-jsonval/parse_json.rb" \
   --json-string="$json" \
   --prop=build_url`
 
-envman add --key HOCKEYAPP_DEPLOY_BUILD_URL --value "${build_url}"
+envman add --key "HOCKEYAPP_DEPLOY_BUILD_URL" --value "${build_url}"
 
 # config url
 config_url=`ruby "${THIS_SCRIPTDIR}/steps-utils-jsonval/parse_json.rb" \
   --json-string="$json" \
   --prop=config_url`
 
-envman add --key HOCKEYAPP_DEPLOY_CONFIG_URL --value "${config_url}"
+envman add --key "HOCKEYAPP_DEPLOY_CONFIG_URL" --value "${config_url}"
 
 
 # final results
-write_section_to_formatted_output "# Success"
-write_section_to_formatted_output "## Generated Outputs"
-echo_string_to_formatted_output "* Deploy Result: **${HOCKEYAPP_DEPLOY_STATUS}**"
+echo "# Success"
+echo "## Generated Outputs"
+echo "* Deploy Result: **success**"
 if [ -z "${public_url}" ] ; then
   public_url='(empty/none)'
 else
   public_url="[${public_url}](${public_url})"
 fi
-echo_string_to_formatted_output "* Public URL: **${public_url}**"
+echo "* Public URL: **${public_url}**"
 if [ -z "${build_url}" ] ; then
   build_url='(empty/none)'
 else
   build_url="[${build_url}](${build_url})"
 fi
-echo_string_to_formatted_output "* Build (direct download) URL: **${build_url}**"
+echo "* Build (direct download) URL: **${build_url}**"
 if [ -z "${config_url}" ] ; then
   config_url='(empty/none)'
 else
   config_url="[${config_url}](${config_url})"
 fi
-echo_string_to_formatted_output "* Config URL: **${config_url}**"
+echo "* Config URL: **${config_url}**"
 
 exit 0
