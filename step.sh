@@ -23,7 +23,7 @@ fi
 # IPA
 if [ ! -f "${ipa_path}" ] ; then
   echo "# Error"
-  echo '* No IPA found to deploy.'
+  echo "* No IPA found to deploy. Specified path was: ${ipa_path}"
   echoStatusFailed
   exit 1
 fi
