@@ -25,7 +25,7 @@ is_requires_admin_user: false
 is_always_run: false
 is_skippable: false
 dependencies: []
-run_if: ""
+run_if: ".IsCI"
 inputs:
   - ipa_path: "$BITRISE_IPA_PATH"
     opts:
