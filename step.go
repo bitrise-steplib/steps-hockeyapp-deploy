@@ -154,7 +154,7 @@ func main() {
 	logInfo("Configs:")
 	logDetails("ipa_path: %s", ipaPath)
 	logDetails("dsym_path: %s", dsymPath)
-	logDetails("api_token: %s", apiToken)
+	logDetails("api_token: ***")
 	logDetails("app_id: %s", appID)
 	logDetails("notes: %s", notes)
 	logDetails("notes_type: %s", notesType)
