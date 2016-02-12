@@ -1,8 +1,0 @@
-{
-	"deps": [
-			{
-					"url": "https://github.com/bitrise-io/steps-utils-json.git",
-					"store_path": "steps-utils-jsonval"
-			}
-	]
-}

@@ -1,8 +1,0 @@
-{
-	"dep_locks": [
-		{
-			"url": "https://github.com/bitrise-io/steps-utils-json.git",
-			"revision": "97e775d57dbb48ab7fc7404bc69252d5270c023a"
-		}
-	]
-}
