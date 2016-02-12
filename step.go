@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -64,12 +65,32 @@ func logInfo(format string, v ...interface{}) {
 
 func logDetails(format string, v ...interface{}) {
 	errorMsg := fmt.Sprintf(format, v...)
-	fmt.Printf("  \x1b[97;1m%s\x1b[0m\n", errorMsg)
+	fmt.Printf("  %s\n", errorMsg)
 }
 
 func logDone(format string, v ...interface{}) {
 	errorMsg := fmt.Sprintf(format, v...)
 	fmt.Printf("  \x1b[32;1m%s\x1b[0m\n", errorMsg)
+}
+
+func genericIsPathExists(pth string) (os.FileInfo, bool, error) {
+	if pth == "" {
+		return nil, false, errors.New("No path provided")
+	}
+	fileInf, err := os.Stat(pth)
+	if err == nil {
+		return fileInf, true, nil
+	}
+	if os.IsNotExist(err) {
+		return nil, false, nil
+	}
+	return fileInf, false, err
+}
+
+// IsPathExists ...
+func IsPathExists(pth string) (bool, error) {
+	_, isExists, err := genericIsPathExists(pth)
+	return isExists, err
 }
 
 func exportEnvironmentWithEnvman(keyStr, valueStr string) error {
@@ -127,11 +148,21 @@ func main() {
 	// Validate options
 	ipaPath := ""
 	if ipaPath = os.Getenv("ipa_path"); ipaPath == "" {
+		logFail("Missing required input: ipa_path")
+	}
+	if exist, err := IsPathExists(ipaPath); err != nil {
+		logFail("Failed to check if path (%s) exist, error: %#v", ipaPath, err)
+	} else if !exist {
 		logFail("No IPA found to deploy. Specified path was: %s", ipaPath)
 	}
 
 	dsymPath := ""
 	if dsymPath = os.Getenv("dsym_path"); dsymPath == "" {
+		logFail("Missing required input: dsym_path")
+	}
+	if exist, err := IsPathExists(dsymPath); err != nil {
+		logFail("Failed to check if path (%s) exist, error: %#v", dsymPath, err)
+	} else if !exist {
 		logFail("DSYM file not found to deploy. Specified path was: %s. To generate debug symbols (dSYM) go to your Xcode Project Settings - `Build Settings - Debug Information Format` and set it to **DWARF with dSYM File**.", dsymPath)
 	}
 
