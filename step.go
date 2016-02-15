@@ -146,41 +146,26 @@ func createRequest(url string, fields, files map[string]string) (*http.Request, 
 func main() {
 	//
 	// Validate options
-	ipaPath := ""
-	if ipaPath = os.Getenv("ipa_path"); ipaPath == "" {
-		logFail("Missing required input: ipa_path")
-	}
-	if exist, err := IsPathExists(ipaPath); err != nil {
-		logFail("Failed to check if path (%s) exist, error: %#v", ipaPath, err)
-	} else if !exist {
-		logFail("No IPA found to deploy. Specified path was: %s", ipaPath)
-	}
-
-	dsymPath := ""
-	if dsymPath = os.Getenv("dsym_path"); dsymPath == "" {
-		logFail("Missing required input: dsym_path")
-	}
-	if exist, err := IsPathExists(dsymPath); err != nil {
-		logFail("Failed to check if path (%s) exist, error: %#v", dsymPath, err)
-	} else if !exist {
-		logFail("DSYM file not found to deploy. Specified path was: %s. To generate debug symbols (dSYM) go to your Xcode Project Settings - `Build Settings - Debug Information Format` and set it to **DWARF with dSYM File**.", dsymPath)
-	}
-
-	apiToken := ""
-	if apiToken = os.Getenv("api_token"); apiToken == "" {
-		logFail("No App api_token provided as environment variable. Terminating...")
-	}
-
+	ipaPath := os.Getenv("ipa_path")
+	dsymPath := os.Getenv("dsym_path")
+	apiToken := os.Getenv("api_token")
 	appID := os.Getenv("app_id")
 	notes := os.Getenv("notes")
 	notesType := os.Getenv("notes_type")
 	notify := os.Getenv("notify")
 	status := os.Getenv("status")
-	mandatory := os.Getenv("mandatory")
 	tags := os.Getenv("tags")
 	commitSHA := os.Getenv("commit_sha")
 	buildServerURL := os.Getenv("build_server_url")
 	repositoryURL := os.Getenv("repository_url")
+
+	// mandatory handling, with backward compatibility
+	//  0 - not mandatory (default)
+	//  1 - mandatory
+	mandatory := "0"
+	if os.Getenv("mandatory") == "1" || os.Getenv("mandatory") == "true" {
+		mandatory = "1"
+	}
 
 	logInfo("Configs:")
 	logDetails("ipa_path: %s", ipaPath)
@@ -196,6 +181,28 @@ func main() {
 	logDetails("commit_sha: %s", commitSHA)
 	logDetails("build_server_url: %s", buildServerURL)
 	logDetails("repository_url: %s", repositoryURL)
+
+	if ipaPath == "" {
+		logFail("Missing required input: ipa_path")
+	}
+	if exist, err := IsPathExists(ipaPath); err != nil {
+		logFail("Failed to check if path (%s) exist, error: %#v", ipaPath, err)
+	} else if !exist {
+		logFail("No IPA found to deploy. Specified path was: %s", ipaPath)
+	}
+
+	if dsymPath == "" {
+		logFail("Missing required input: dsym_path")
+	}
+	if exist, err := IsPathExists(dsymPath); err != nil {
+		logFail("Failed to check if path (%s) exist, error: %#v", dsymPath, err)
+	} else if !exist {
+		logFail("DSYM file not found to deploy. Specified path was: %s. To generate debug symbols (dSYM) go to your Xcode Project Settings - `Build Settings - Debug Information Format` and set it to **DWARF with dSYM File**.", dsymPath)
+	}
+
+	if apiToken == "" {
+		logFail("No App api_token provided as environment variable. Terminating...")
+	}
 
 	//
 	// Create request
