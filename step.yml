@@ -33,17 +33,12 @@ inputs:
       is_required: true
   - dsym_path: "$BITRISE_DSYM_PATH"
     opts:
-      title: "dSYM file path"
+      title: "dSYM zip file path"
       description: |-
-        Although the dSYM is marked as optional in the HockeyApp
-        API documentations it seems that HockeyApp can't parse
-        the required App information from the IPA in case no
-        dSYM is generated (if dSYM generation is turned off
-        in the Xcode project settings).
-
-        To turn on dSYM generation open you Xcode
-        project, select *Project Settings - Build Settings - Debug Information Format*
+        To turn on dSYM generation open your Xcode project,
+        select *Project Settings - Build Settings - Debug Information Format*
         and make sure it's set to the *DWARF with dSYM File* option.
+        After dsym generated, zip it and provide the zipped path as input.
   - api_token: ""
     opts:
       title: "API Token"
