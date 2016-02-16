@@ -87,6 +87,21 @@ func genericIsPathExists(pth string) (os.FileInfo, bool, error) {
 	return fileInf, false, err
 }
 
+// IsDirExists ...
+func IsDirExists(pth string) (bool, error) {
+	fileInf, isExists, err := genericIsPathExists(pth)
+	if err != nil {
+		return false, err
+	}
+	if !isExists {
+		return false, nil
+	}
+	if fileInf == nil {
+		return false, errors.New("No file info available.")
+	}
+	return fileInf.IsDir(), nil
+}
+
 // IsPathExists ...
 func IsPathExists(pth string) (bool, error) {
 	_, isExists, err := genericIsPathExists(pth)
@@ -191,13 +206,18 @@ func main() {
 		logFail("No IPA found to deploy. Specified path was: %s", ipaPath)
 	}
 
-	if dsymPath == "" {
-		logFail("Missing required input: dsym_path")
-	}
-	if exist, err := IsPathExists(dsymPath); err != nil {
-		logFail("Failed to check if path (%s) exist, error: %#v", dsymPath, err)
-	} else if !exist {
-		logFail("DSYM file not found to deploy. Specified path was: %s. To generate debug symbols (dSYM) go to your Xcode Project Settings - `Build Settings - Debug Information Format` and set it to **DWARF with dSYM File**.", dsymPath)
+	if dsymPath != "" {
+		if exist, err := IsPathExists(dsymPath); err != nil {
+			logFail("Failed to check if path (%s) exist, error: %#v", dsymPath, err)
+		} else if !exist {
+			logFail("DSYM file not found to deploy. Specified path was: %s. To generate debug symbols (dSYM) go to your Xcode Project Settings - `Build Settings - Debug Information Format` and set it to **DWARF with dSYM File**.", dsymPath)
+		} else {
+			if exist, err := IsDirExists(dsymPath); err != nil {
+				logFail("Failed to check if path (%s) is directory, error: %#v", dsymPath, err)
+			} else if exist {
+				logFail("DSYM is a directory, you should compress it and provide the compressed files path.")
+			}
+		}
 	}
 
 	if apiToken == "" {
@@ -226,8 +246,10 @@ func main() {
 	}
 
 	files := map[string]string{
-		"ipa":  ipaPath,
-		"dsym": dsymPath,
+		"ipa": ipaPath,
+	}
+	if dsymPath != "" {
+		files["dsym"] = dsymPath
 	}
 
 	request, err := createRequest(requestURL, fields, files)
