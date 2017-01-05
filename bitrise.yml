@@ -5,7 +5,7 @@ app:
   envs:
   - STEP_VERSION: 2.3.0
 
-  - SAMPLE_APP_URL: git@github.com:bitrise-samples/sample-apps-ios-simple-objc.git
+  - SAMPLE_APP_URL: https://github.com/bitrise-samples/sample-apps-ios-simple-objc.git
   - BITRISE_PROJECT_PATH: ios-simple-objc/ios-simple-objc.xcodeproj
   - BITRISE_SCHEME: ios-simple-objc
 
