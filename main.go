@@ -93,13 +93,14 @@ func (configs ConfigsModel) print() {
 }
 
 func (configs ConfigsModel) validate() error {
-	if configs.IPAPath == "" {
-		return errors.New("no IPAPath parameter specified")
-	}
-	if exist, err := pathutil.IsPathExists(configs.IPAPath); err != nil {
-		return fmt.Errorf("failed to check if IPAPath exist at: %s, error: %s", configs.IPAPath, err)
-	} else if !exist {
-		return fmt.Errorf("IPAPath not exist at: %s", configs.IPAPath)
+	if configs.IPAPath != "" {
+		if exist, err := pathutil.IsPathExists(configs.IPAPath); err != nil {
+			return fmt.Errorf("failed to check if IPAPath exist at: %s, error: %s", configs.IPAPath, err)
+		} else if !exist {
+			return fmt.Errorf("IPAPath not exist at: %s", configs.IPAPath)
+		}
+	} else if configs.DSYMPath == "" {
+		return errors.New("IPAPath parameter must be specifed when DSYMPath is missing")
 	}
 
 	if configs.DSYMPath != "" {
@@ -250,8 +251,9 @@ func main() {
 		"repository_url":   configs.RepositoryURL,
 	}
 
-	files := map[string]string{
-		"ipa": configs.IPAPath,
+	files := map[string]string{}
+	if configs.IPAPath != "" {
+		files["ipa"] = configs.IPAPath
 	}
 	if configs.DSYMPath != "" {
 		files["dsym"] = configs.DSYMPath
