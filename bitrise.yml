@@ -1,4 +1,4 @@
-format_version: 1.3.1
+format_version: "2"
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
 app:
@@ -48,11 +48,21 @@ workflows:
     - xcode-archive:
         title: Archive the sample app
     - path::./:
-        title: Step test
+        title: Step test - ipa only
         run_if: true
         inputs:
         - api_token: $API_TOKEN
         - app_id: $APP_ID
+        - ipa_path: "$BITRISE_IPA_PATH"
+        - dsym_path: ""
+    - path::./:
+        title: Step test - dsym only
+        run_if: true
+        inputs:
+        - api_token: $API_TOKEN
+        - app_id: $APP_ID
+        - ipa_path: ""
+        - dsym_path: "$BITRISE_DSYM_PATH"
     - script:
         title: Output test
         is_always_run: true
