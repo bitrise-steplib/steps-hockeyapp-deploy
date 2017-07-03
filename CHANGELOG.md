@@ -1,6 +1,13 @@
-## Changelog (Current version: 2.4.0)
+## Changelog (Current version: 2.4.1)
 
 -----------------
+
+### 2.4.1 (2017 Jul 03)
+
+* [2c9161a] prepare for 2.4.1
+* [9d51796] do not require ipa path
+* [5e70587] test for only ipa and only dsym uploads (#25)
+* [541f4f5] make .ipa input optional when .dSYM is specified (#24)
 
 ### 2.4.0 (2017 Jan 05)
 
@@ -98,4 +105,4 @@
 
 -----------------
 
-Updated: 2017 Jan 05
+Updated: 2017 Jul 03
