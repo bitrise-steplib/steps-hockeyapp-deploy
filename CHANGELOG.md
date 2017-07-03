@@ -1,6 +1,11 @@
-## Changelog (Current version: 2.4.1)
+## Changelog (Current version: 2.4.2)
 
 -----------------
+
+### 2.4.2 (2017 Jul 03)
+
+* [0acaf40] prepare for 2.4.2
+* [f96db6e] type tag fix
 
 ### 2.4.1 (2017 Jul 03)
 
