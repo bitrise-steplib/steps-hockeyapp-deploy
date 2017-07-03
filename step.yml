@@ -38,7 +38,6 @@ inputs:
   - ipa_path: "$BITRISE_IPA_PATH"
     opts:
       title: "IPA file path"
-      is_required: true
   - dsym_path: "$BITRISE_DSYM_PATH"
     opts:
       title: "dSYM zip file path (optional)"
