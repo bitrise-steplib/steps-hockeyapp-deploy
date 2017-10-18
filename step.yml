@@ -102,6 +102,11 @@ inputs:
         * 1: Markdown
       value_options: ["0", "1"]
       is_required: true
+  - notes_path: ""
+    opts:
+      title: "Path to a file containing notes that will be attached to the deploy"
+      description: |-
+        As an alternative to passing the notes on the command line, you can instead pass a path to a file.
   - notify: "2"
     opts:
       title: "Notify Testers?"

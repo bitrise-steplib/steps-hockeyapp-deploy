@@ -43,6 +43,7 @@ type ConfigsModel struct {
 
 	Notes          string
 	NotesType      string
+	NotesPath      string
 	Notify         string
 	Status         string
 	Mandatory      string
@@ -62,6 +63,7 @@ func createConfigsModelFromEnvs() ConfigsModel {
 
 		Notes:          os.Getenv("notes"),
 		NotesType:      os.Getenv("notes_type"),
+		NotesPath:      os.Getenv("notes_path"),
 		Notify:         os.Getenv("notify"),
 		Status:         os.Getenv("status"),
 		Mandatory:      os.Getenv("mandatory"),
@@ -83,6 +85,7 @@ func (configs ConfigsModel) print() {
 
 	log.Printf("- Notes: %s", configs.Notes)
 	log.Printf("- NotesType: %s", configs.NotesType)
+	log.Printf("- NotesPath: %s", configs.NotesPath)
 	log.Printf("- Notify: %s", configs.Notify)
 	log.Printf("- Status: %s", configs.Status)
 	log.Printf("- Mandatory: %s", configs.Mandatory)
@@ -239,8 +242,25 @@ func main() {
 		mandatory = "1"
 	}
 
+	if configs.NotesPath != "" && configs.Notes != "" {
+		log.Warnf("You have set both notes and notes_path. We will use notes_path, reading the notes from a file, unless this file cannot be read.")
+	}
+	
+	var notes string
+	if configs.NotesPath != "" {
+		notesBuf, err := ioutil.ReadFile(configs.NotesPath)
+		if err == nil {
+			notes = string(notesBuf)
+		} else {
+			log.Warnf("Failed to read notes file %s, error: %s", configs.NotesPath, err)
+			notes = configs.Notes
+		}
+	} else {
+		notes = configs.Notes
+	}
+	
 	fields := map[string]string{
-		"notes":            configs.Notes,
+		"notes":            notes,
 		"notes_type":       configs.NotesType,
 		"notify":           configs.Notify,
 		"status":           configs.Status,
