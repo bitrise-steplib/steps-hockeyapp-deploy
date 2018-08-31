@@ -1,5 +1,5 @@
 title: HockeyApp iOS Deploy
-summary: Deploy your awesome iOS Application to HockeyApp.
+summary: Deploy your iOS Application to HockeyApp.
 description: |-
   Deploy an iOS application to [HockeyApp](http://hockeyapp.net),
   add notes even in markdown format, notify testers, restrict download.
@@ -13,9 +13,7 @@ description: |-
 website: https://github.com/bitrise-io/steps-hockeyapp-deploy
 source_code_url: https://github.com/bitrise-io/steps-hockeyapp-deploy
 support_url: https://github.com/bitrise-io/steps-hockeyapp-deploy/issues
-host_os_tags:
-  - osx-10.9
-  - osx-10.10
+
 project_type_tags:
   - ios
   - xamarin
@@ -67,6 +65,7 @@ inputs:
         at the *Active API Tokens* section. Copy and paste here the API Token
         you want to use.
       is_required: true
+      is_sensitive: true
   - app_id: ""
     opts:
       title: "HockeyApp: App ID"
@@ -87,6 +86,7 @@ inputs:
         Once the app is registered select it from the Apps list on the
         Dashboard page and on the left side you'll find the **App ID**
         of the app. Copy and paste it here.
+      is_sensitive: true
   - notes: "Deploy with Bitrise HockeyApp Deploy Step."
     opts:
       title: "Notes attached to the deploy"
