@@ -1,6 +1,8 @@
 title: HockeyApp iOS Deploy
-summary: Deploy your iOS Application to HockeyApp.
+summary: Deploy your iOS Application to HockeyApp. (Deprecated.)
 description: |-
+  __Deprecated__, see [https://www.hockeyapp.net/blog/2019/11/16/hockeyApp-is-being-retired.html](https://www.hockeyapp.net/blog/2019/11/16/hockeyApp-is-being-retired.html).
+
   Deploy an iOS application to [HockeyApp](http://hockeyapp.net),
   add notes even in markdown format, notify testers, restrict download.
 
